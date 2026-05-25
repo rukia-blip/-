@@ -1,0 +1,1075 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCNA 記述式クイズ - 問題集切替対応版 v6</title>
+<style>
+  :root {
+    --bg: #f6f7fb;
+    --panel: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --line: #d9dee8;
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --danger: #dc2626;
+    --success: #16a34a;
+    --warning: #d97706;
+    --soft-blue: #eef4ff;
+    --soft-green: #ecfdf5;
+    --soft-red: #fef2f2;
+    --soft-yellow: #fffbeb;
+    --shadow: 0 12px 32px rgba(15, 23, 42, 0.10);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
+  header { background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: white; padding: 22px 18px; }
+  header .wrap { max-width: 1180px; margin: 0 auto; }
+  h1 { margin: 0 0 8px; font-size: clamp(22px, 4vw, 34px); letter-spacing: 0.02em; }
+  .subtitle { margin: 0; opacity: 0.92; line-height: 1.6; }
+  main { max-width: 1180px; margin: 0 auto; padding: 18px; }
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 14px; }
+  .tab-btn { border: 1px solid var(--line); background: white; color: var(--text); border-radius: 999px; padding: 10px 14px; font-weight: 700; cursor: pointer; }
+  .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .grid { display: grid; grid-template-columns: 360px 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 16px; }
+  .panel + .panel { margin-top: 14px; }
+  .panel h2, .panel h3 { margin: 0 0 12px; }
+  .field { margin-bottom: 12px; }
+  label { display: block; font-size: 13px; font-weight: 800; color: #374151; margin-bottom: 6px; }
+  input[type="number"], input[type="text"], select, textarea { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 10px 11px; font: inherit; background: white; color: var(--text); }
+  input[type="file"] { width: 100%; }
+  textarea { min-height: 132px; resize: vertical; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .row > * { flex: 1; }
+  .checkbox-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 14px; }
+  .checkbox-row input { width: 18px; height: 18px; }
+  .btn { appearance: none; border: 0; border-radius: 12px; padding: 10px 14px; font-weight: 800; cursor: pointer; background: #e5e7eb; color: #111827; transition: transform .04s ease, background .15s ease; }
+  .btn:hover { filter: brightness(0.98); }
+  .btn:active { transform: translateY(1px); }
+  .btn.primary { background: var(--primary); color: white; }
+  .btn.primary:hover { background: var(--primary-dark); }
+  .btn.success { background: var(--success); color: white; }
+  .btn.danger { background: var(--danger); color: white; }
+  .btn.warning { background: var(--warning); color: white; }
+  .btn.ghost { background: white; border: 1px solid var(--line); }
+  .btn.full { width: 100%; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+  .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .stat { background: #f9fafb; border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+  .stat .k { font-size: 12px; color: var(--muted); font-weight: 800; }
+  .stat .v { margin-top: 4px; font-size: 22px; font-weight: 900; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 5px 9px; font-size: 12px; font-weight: 800; background: #eef2ff; color: #3730a3; }
+  .badge.green { background: var(--soft-green); color: #166534; }
+  .badge.red { background: var(--soft-red); color: #991b1b; }
+  .badge.yellow { background: var(--soft-yellow); color: #92400e; }
+  .question-card { min-height: 420px; display: flex; flex-direction: column; gap: 12px; }
+  .q-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; color: var(--muted); font-weight: 700; }
+  .q-text, .answer-box { white-space: pre-wrap; line-height: 1.75; border: 1px solid var(--line); border-radius: 16px; padding: 16px; background: #fbfdff; }
+  .q-text { font-size: 18px; font-weight: 700; }
+  .answer-box { background: var(--soft-green); border-color: #bbf7d0; }
+  .answer-box.hidden { display: none; }
+  .user-answer { min-height: 120px; }
+  .notice { border-radius: 14px; border: 1px solid var(--line); background: #fff; padding: 12px; line-height: 1.6; }
+  .notice.info { background: var(--soft-blue); border-color: #bfdbfe; }
+  .notice.warn { background: var(--soft-yellow); border-color: #fde68a; }
+  .notice.error { background: var(--soft-red); border-color: #fecaca; color: #7f1d1d; }
+  .small { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .hidden-view { display: none; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { border-bottom: 1px solid var(--line); padding: 9px 8px; text-align: left; vertical-align: top; }
+  th { position: sticky; top: 0; background: #f9fafb; z-index: 1; font-size: 12px; color: #374151; }
+  .table-wrap { overflow: auto; max-height: 62vh; border: 1px solid var(--line); border-radius: 14px; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+  .progress-bar { height: 10px; width: 100%; background: #e5e7eb; border-radius: 999px; overflow: hidden; }
+  .progress-bar > div { height: 100%; width: 0%; background: var(--primary); }
+  .footer-note { margin-top: 16px; color: var(--muted); font-size: 12px; }
+  details { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; background: #fff; }
+  details summary { cursor: pointer; font-weight: 800; }
+  .danger-zone { border-color: #fecaca; background: #fff7f7; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>CCNA 記述式クイズ</h1>
+    <p class="subtitle">問題集切替・未出題モード・苦手重み出題・問題別正答率・進捗インポート/エクスポート対応の単体HTML版です。</p>
+  </div>
+</header>
+<main>
+  <div id="errorBanner" class="notice error hidden-view"></div>
+  <div class="tabs" role="tablist">
+    <button type="button" class="tab-btn active" data-view="quizView">出題</button>
+    <button type="button" class="tab-btn" data-view="statsView">正答率確認</button>
+    <button type="button" class="tab-btn" data-view="banksView">問題集 / CSV</button>
+    <button type="button" class="tab-btn" data-view="dataView">進捗データ</button>
+    <button type="button" class="tab-btn" data-view="helpView">起動・使い方</button>
+  </div>
+
+  <section id="quizView">
+    <div class="grid">
+      <aside>
+        <div class="panel">
+          <h2>出題設定</h2>
+          <div class="field">
+            <label for="bankSelect">問題集</label>
+            <select id="bankSelect"></select>
+          </div>
+          <div class="field">
+            <label for="modeSelect">出題モード</label>
+            <select id="modeSelect">
+              <option value="weak">正答率の低いものから出題（補正版）</option>
+              <option value="unseen">未出題から出題</option>
+              <option value="random">ランダムに出題</option>
+            </select>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="questionCount">問題数</label>
+              <input id="questionCount" type="number" min="1" max="200" step="1" value="10">
+            </div>
+            <div class="field">
+              <label for="minWeight">100%問題の最低重み</label>
+              <input id="minWeight" type="number" min="0" max="20" step="0.5" value="2">
+            </div>
+          </div>
+          <label class="checkbox-row"><input id="fillIfShort" type="checkbox" checked>未出題が足りない場合は既出問題で補充</label>
+          <label class="checkbox-row"><input id="autoNext" type="checkbox" checked>判定後、自動で次の問題へ進む</label>
+          <button id="startBtn" type="button" class="btn primary full">この設定で開始</button>
+          <div class="footer-note">苦手重みは固定枠ではなく連続的な重みです。最低重みを0にすると、正答率100%の問題は抽選対象から外れます。</div>
+        </div>
+
+        <div class="panel">
+          <h3>現在の問題集</h3>
+          <div id="bankSummary" class="stat-grid"></div>
+        </div>
+      </aside>
+
+      <section class="panel question-card">
+        <div class="q-meta">
+          <span id="sessionInfo" class="badge">未開始</span>
+          <span id="questionInfo" class="badge green">問題集を選択してください</span>
+        </div>
+        <div class="progress-bar" title="セッション進捗"><div id="sessionProgress"></div></div>
+        <div id="questionText" class="q-text">「この設定で開始」を押すと出題されます。</div>
+        <textarea id="userAnswer" class="user-answer" placeholder="ここに自分の回答メモを書けます。保存対象ではありません。"></textarea>
+        <div class="row">
+          <button id="showAnswerBtn" type="button" class="btn ghost">模範解答を表示</button>
+          <button id="copyQuestionMemoBtn" type="button" class="btn ghost">問題文＋回答メモをコピー</button>
+          <button id="prevBtn" type="button" class="btn ghost">前へ</button>
+          <button id="nextBtn" type="button" class="btn ghost">次へ</button>
+        </div>
+        <div id="answerBox" class="answer-box hidden">ここに模範解答が表示されます。</div>
+        <div id="judgeButtons" class="row">
+          <button id="correctBtn" type="button" class="btn success">正解として記録</button>
+          <button id="wrongBtn" type="button" class="btn danger">不正解として記録</button>
+          <button id="undoBtn" type="button" class="btn warning">直前の判定を取り消し</button>
+        </div>
+        <div id="finishBox" class="notice info hidden-view">
+          <strong>指定問題数の判定が完了しました。</strong>
+          <div class="small">正解/不正解ボタンは無効化しています。押し間違いがあれば「直前の判定を取り消し」を使ってください。</div>
+          <button id="repeatSameBtn" type="button" class="btn primary full" style="margin-top: 10px;">同条件でもう一度</button>
+        </div>
+        <div id="lastAction" class="small"></div>
+      </section>
+    </div>
+  </section>
+
+  <section id="statsView" class="hidden-view">
+    <div class="panel">
+      <h2>正答率確認</h2>
+      <div class="row">
+        <div class="field">
+          <label for="statsBankSelect">表示する問題集</label>
+          <select id="statsBankSelect"></select>
+        </div>
+        <div class="field">
+          <label for="statsFilter">検索</label>
+          <input id="statsFilter" type="text" value="" placeholder="問題文・解答・コメントで検索">
+        </div>
+        <div class="field">
+          <label for="statsSort">並び順</label>
+          <select id="statsSort">
+            <option value="accuracyAsc">正答率が低い順</option>
+            <option value="attemptsAsc">試行回数が少ない順</option>
+            <option value="unseenFirst">未出題を先頭</option>
+            <option value="indexAsc">元CSV順</option>
+          </select>
+        </div>
+      </div>
+      <div id="statsSummary" class="notice info"></div>
+      <div class="row" style="margin: 12px 0;">
+        <button id="exportStatsCsvBtn" type="button" class="btn ghost">この問題集の成績CSVを出力</button>
+        <button id="resetStatsFilterBtn" type="button" class="btn ghost">検索条件をクリア</button>
+      </div>
+      <div class="table-wrap"><table id="statsTable"></table></div>
+    </div>
+  </section>
+
+  <section id="banksView" class="hidden-view">
+    <div class="grid">
+      <div class="panel">
+        <h2>問題集一覧</h2>
+        <div id="bankList"></div>
+      </div>
+      <div>
+        <div class="panel">
+          <h2>CSVを追加 / 更新</h2>
+          <p class="small">CSVの列名は <span class="mono">FrontText</span> / <span class="mono">BackText</span> / <span class="mono">Comment</span> を優先します。列名がない場合も、先頭3列を問題・解答・コメントとして読み込みます。</p>
+          <div class="field">
+            <label for="csvName">問題集名</label>
+            <input id="csvName" type="text" value="" placeholder="例：CCNA 2周目 弱点問題集">
+          </div>
+          <div class="field">
+            <label for="csvFile">CSVファイル</label>
+            <input id="csvFile" type="file" accept=".csv,text/csv">
+          </div>
+          <button id="importCsvBtn" type="button" class="btn primary full">CSVを問題集として追加</button>
+          <div id="csvImportResult" class="small" style="margin-top: 10px;"></div>
+        </div>
+        <div class="panel danger-zone">
+          <h3>カスタム問題集の削除</h3>
+          <p class="small">内蔵問題集は削除できません。削除しても、エクスポート済み進捗JSONがあれば復元できます。</p>
+          <div class="row">
+            <select id="deleteBankSelect"></select>
+            <button id="deleteBankBtn" type="button" class="btn danger">選択したカスタム問題集を削除</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="dataView" class="hidden-view">
+    <div class="grid">
+      <div class="panel">
+        <h2>進捗エクスポート</h2>
+        <p class="small">全問題集の進捗と、追加CSVから作ったカスタム問題集をJSONで保存します。PC移行やバックアップに使えます。</p>
+        <button id="exportProgressBtn" type="button" class="btn primary full">進捗JSONをエクスポート</button>
+        <button id="exportAllStatsBtn" type="button" class="btn ghost full" style="margin-top: 8px;">全問題集の成績CSVを出力</button>
+      </div>
+      <div class="panel">
+        <h2>進捗インポート</h2>
+        <p class="small">このアプリで出力したJSONを読み込めます。通常は「結合」でOKです。</p>
+        <div class="field">
+          <label for="progressFile">進捗JSONファイル</label>
+          <input id="progressFile" type="file" accept=".json,application/json">
+        </div>
+        <label class="checkbox-row"><input id="replaceOnImport" type="checkbox">現在の進捗を置き換える（通常はオフ）</label>
+        <button id="importProgressBtn" type="button" class="btn primary full">進捗JSONをインポート</button>
+        <div id="progressImportResult" class="small" style="margin-top: 10px;"></div>
+      </div>
+    </div>
+    <div class="panel danger-zone">
+      <h2>リセット</h2>
+      <p class="small">現在選択中の問題集だけ、または全問題集の進捗をリセットできます。押し間違い防止の確認が出ます。</p>
+      <div class="row">
+        <button id="resetCurrentProgressBtn" type="button" class="btn warning">現在の問題集の進捗をリセット</button>
+        <button id="resetAllProgressBtn" type="button" class="btn danger">全問題集の進捗をリセット</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="helpView" class="hidden-view">
+    <div class="panel">
+      <h2>起動方法</h2>
+      <ol>
+        <li>このHTMLファイルをPCやスマホに保存します。</li>
+        <li>Chrome / Edge / Safari などのブラウザで開きます。</li>
+        <li>問題集を選び、問題数と出題モードを指定して「この設定で開始」を押します。内蔵問題集は3種類です。</li>
+      </ol>
+      <div class="notice info">インストール不要・依存関係なしです。進捗はブラウザのlocalStorageに保存されるため、別ブラウザや別端末に移す場合は「進捗JSONをエクスポート」してください。</div>
+      <h3>入力欄と模範解答の照合</h3>
+      <p>「模範解答を表示」を押しても、入力欄の内容は消えません。問題を前後移動して戻った場合も、そのセッション中の入力内容を復元します。</p>
+      <h3>苦手重みモードの考え方</h3>
+      <p>単純な <span class="mono">100 - 正答率</span> だけだと、1回だけ正解した問題が100%になって以後ほぼ出なくなります。この版では、試行回数が少ない問題には不確実性を残しますが、不確実性補正は誤答率に応じて按分します。</p>
+      <p>正答率100%の問題は誤答率が0なので、不確実性補正は加算しません。最低重みを0にした場合は抽選重みも0になり、苦手重みモードでは出題されません。最低重みを0より大きくすると、その分だけ100%問題も低確率で復習に混ざります。</p>
+      <p>また、100%復習枠を固定で10%のように分ける方式ではありません。固定枠にすると80〜90%台の問題が不自然に薄くなるため、全問題を連続的な重みで抽選します。そのため、99%問題は100%問題より出やすく、80〜90%問題はさらに出やすくなります。</p>
+      <details>
+        <summary>データ保存の分離について</summary>
+        <p>進捗は <span class="mono">問題集ID → 問題ID</span> 単位で保存されます。つまり、基礎問題集の全体正答率と、弱点補強問題集の全体正答率は混ざりません。</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+<script id="builtin-data" type="application/json">[{"id":"builtin_ccna_output_template_1","name":"CCNA 基礎問題集（添付CSV）","description":"最初に添付されたCSVから作成した問題集。","createdAt":"2026-05-25","questionCount":162,"questions":[{"id":"3a4375465052944b","front":"現在のLAN構築における主流のトポロジーは何ですか。","back":"スター型トポロジー","comment":"チャプター①(1st)","sourceIndex":1},{"id":"a76029e89b2298b8","front":"ユニキャスト・ブロードキャスト・マルチキャストという通信方式についてそれぞれ説明してください。","back":"ユニキャスト:1対1、ブロードキャスト:1対多数（全体）、マルチキャスト:1対グループ","comment":"チャプター①(1st)","sourceIndex":2},{"id":"030ef6982aa722e7","front":"OSI参照モデルが作成された主な理由は何ですか。","back":"異なるメーカー間で通信できるようにするため","comment":"チャプター①(1st)","sourceIndex":3},{"id":"236f50a6ec3b9ca1","front":"OSI参照モデルの階層を7→1層にかけて回答してください。","back":"7:アプリケーション層（アプリケーションに関する規定）\n6:プレゼンテーション層（データの表現方式に関する規定）\n5:セッション層（通信の開始から終了まで（セッション）に関する規定）\n4:トランスポート層（通信の制御に関する規定。信頼性を提供。PDUはセグメント）\n3:ネットワーク層（異なるネットワーク間のエンドツーエンドの通信に関する規定。識別アドレスはIPアドレス。PDUはパケット）\n2:データリンク層（直接接続されたノード間（同一ネットワーク内）における通信に関する規定。エラーのチェックなども行う。識別アドレスはMACアドレス。PDUはフレーム）\n1:物理層（データを電気信号に変換。物理的な接続やインターフェイスに関する規定）","comment":"チャプター①(1st)","sourceIndex":4},{"id":"6c9aa5086f2d3ee4","front":"レイヤ4・レイヤ3・レイヤ2のPDU（データの呼び方）をそれぞれ回答してください。","back":"レイヤ4:セグメント、レイヤ3:パケット、レイヤ2:フレーム","comment":"チャプター①(1st)","sourceIndex":5},{"id":"4ebc6be435e665a8","front":"11110111を10進数に変換してください。","back":"247","comment":"チャプター①(1st)","sourceIndex":6},{"id":"2961ed2ca10983d8","front":"下記文章の間違いを教えてください。\nルーターはホストからパケットを受信するとヘッダー内の「宛先IPアドレス」を確認し、\n自身の持つ「MACアドレステーブル」を検索し、該当するルートが存在した場合\nその情報に従いパケットの転送（ルーティング）を行う。","back":"ルーターはルーティングの際、MACアドレステーブルではなく「ルーティングテーブル」を参照","comment":"チャプター①(1st)","sourceIndex":7},{"id":"a8a56f8be8e1c992","front":"プライベートIPアドレスとグローバルIPアドレスの違いを教えてください。","back":"プライベートIPアドレスはLAN（内部ネットワークのみ）で使用可能。\nグローバルIPアドレスはインターネットを含む全ネットワークで使用可能。","comment":"チャプター①(1st)","sourceIndex":8},{"id":"510ffdb09afcb752","front":"「/19」をサブネットマスクにしてください。","back":"255.255.224.0","comment":"チャプター①(1st)","sourceIndex":9},{"id":"944ab504033b778e","front":"IPアドレス「100.1.1.0」、「126.32.255.0」、「223.192.48.0」のクラスを回答してください。","back":"「100.1.1.0」→クラスA\n「126.32.255.0」→クラスA\n「223.192.48.0」→クラスC","comment":"チャプター①(1st)","sourceIndex":10},{"id":"e660cb8d9a799288","front":"ホストアドレス「192.168.1.39/27」が所属するネットワークのネットワークアドレスとブロードキャストアドレスを教えてください。","back":"ネットワークアドレス:192.168.1.32\nブロードキャストアドレス:192.168.1.63","comment":"チャプター①(1st)","sourceIndex":11},{"id":"8a3ad3d098a2c350","front":"ネットワークアドレス「192.168.1.64/29」のブロードキャストアドレスを教えてください。","back":"192.168.1.71","comment":"チャプター①(1st)","sourceIndex":12},{"id":"185a2e78d3d55f10","front":"クラスCネットワークからネットワークを8つに分割する場合のサブネットマスクと使用可能なホスト数を回答してください。","back":"サブネットマスク:255.255.255.224\nホスト数:30","comment":"チャプター①(1st)","sourceIndex":13},{"id":"02f601ab8468f145","front":"IPv4アドレスは何ビットのアドレスですか","back":"32ビット","comment":"チャプター①(1st)","sourceIndex":14},{"id":"26866a8588a0e47e","front":"TCP/IPモデルの階層を4→1層にかけて回答してください。","back":"4:アプリケーション層（アプリケーションに関する規定）\n3:トランスポート層（アプリケーションプロトコルの制御。信頼性を提供）\n2:インターネット層（異なるネットワーク間のエンドツーエンドの通信に関する規定）\n1:リンク層（直接接続されたノード間の通信に関する規定。エラーのチェック。データを電気信号に変換）","comment":"チャプター①(2nd)","sourceIndex":15},{"id":"102f1ad9bcc6c501","front":"MACアドレスの前半24ビットをなんと呼びますか。","back":"OUI","comment":"チャプター①(2nd)","sourceIndex":16},{"id":"e4f47e8eb7dfb08b","front":"イーサネットヘッダーの構成要素3つを回答してください。","back":"送信元MACアドレス、宛先MACアドレス、タイプ","comment":"チャプター①(2nd)","sourceIndex":17},{"id":"349c4717d9b9190d","front":"半二重通信と全二重通信の違いを説明してください。","back":"半二重は送信側と受信側で交互に通信\n全二重は送信側と受信側で同時に通信が可能","comment":"チャプター①(2nd)","sourceIndex":18},{"id":"676a36c4f1df938c","front":"CSMA/CD方式について説明してください。","back":"半二重通信時に使用される制御方式。\nデータ送信前にケーブル内の空き状態を確認してからデータを送信。\n万が一コリジョンが発生した場合はジャム信号を送ってコリジョンの発生を知らせ、\n受け取った端末はデータ送信を一時中止し、ランダムな時間だけ待機してからデータの再送信を行う。","comment":"チャプター①(2nd)","sourceIndex":19},{"id":"8e5ba992b284b6b3","front":"下記文章の間違っている個所を回答してください。\nレイヤ2スイッチはMACアドレステーブル内に宛先MACアドレスの情報が登録されていない場合、受信したポート以外のすべてのポートからデータの転送を行います。この処理をフィルタリングといいます。","back":"スイッチが受信したポート以外のすべてのポートからデータ転送を行う処理は、フィルタリングではなくフラッディング。","comment":"チャプター①(2nd)","sourceIndex":20},{"id":"e0ffe89efe99dd91","front":"ICMPというプロトコルの役割・特徴について説明してください。","back":"通信状況の確認やエラー時のメッセージ送信を主な用途としたプロトコル。\n代表的なコマンドにpingコマンドがある","comment":"チャプター①(2nd)","sourceIndex":21},{"id":"a3419aae15155b1f","front":"IPアドレスからMACアドレスを調べるためのプロトコルは何ですか。","back":"ARP","comment":"チャプター①(2nd)","sourceIndex":22},{"id":"256d683376039efb","front":"異なるネットワークへの出入り口のことをなんと言いますか。","back":"デフォルトゲートウェイ","comment":"チャプター①(2nd)","sourceIndex":23},{"id":"0d8cb130dc44278c","front":"ポート番号のうち、0~1023に該当するポート番号を何と言いますか。","back":"ウェルノウンポート","comment":"チャプター①(2nd)","sourceIndex":24},{"id":"334c06d5a8589e3f","front":"SSHについて説明してください。","back":"遠隔操作をするためのプロトコルで、通信時に暗号化を行う。\nTCPによって制御され、ポート番号は22","comment":"チャプター①(2nd)","sourceIndex":25},{"id":"acd87fee24cf392f","front":"暗号化を行い、安全なWEB通信が可能なプロトコルは何ですか。","back":"HTTPS","comment":"チャプター①(2nd)","sourceIndex":26},{"id":"51b798505f98faef","front":"TFTPについて説明してください。","back":"認証などを行わず、簡易な手続きでファイル転送を行うプロトコル。\nUDPによって制御され、ポート番号は69","comment":"チャプター①(2nd)","sourceIndex":27},{"id":"44d7ce7b2a60486b","front":"ネットワーク上の機器を監視・管理するためのプロトコルは何ですか。","back":"SNMP","comment":"チャプター①(2nd)","sourceIndex":28},{"id":"e2c35f4a4ae9db64","front":"ノード同士を接続する際に使用する正しいツイストペアケーブルの種類を答えてください。\n①ルータ×スイッチ\n②ハブ×スイッチ\n③PC×PC","back":"①ストレートケーブル\n②クロスケーブル\n③クロスケーブル","comment":"チャプター①(2nd)","sourceIndex":29},{"id":"6b072d7714672ca5","front":"MACアドレスのビット数は？","back":"48ビット","comment":"チャプター①(2nd)","sourceIndex":30},{"id":"07e0c4cdff1fdc99","front":"スイッチのMACアドレステーブルのエージングタイムは何分間？","back":"5分間","comment":"チャプター①(2nd)","sourceIndex":31},{"id":"675460a514e6979f","front":"DHCPのポート番号は？","back":"67、68","comment":"チャプター①(2nd)","sourceIndex":32},{"id":"1cd626f46b9ada97","front":"FTPのポート番号は？","back":"20、21","comment":"チャプター①(2nd)","sourceIndex":33},{"id":"bf38e955b6b2a1e8","front":"HTTPSのポート番号は？","back":"443","comment":"チャプター①(2nd)","sourceIndex":34},{"id":"3d712d076aef054b","front":"NTPのポート番号は？","back":"123","comment":"チャプター①(2nd)","sourceIndex":35},{"id":"ef42f87db4f4debc","front":"DNSのポート番号は？","back":"53","comment":"チャプター①(2nd)","sourceIndex":36},{"id":"aee6c5c46d33090e","front":"NVRAMに保存されている代表的なものを2つ回答してください。","back":"startup-config、コンフィギュレーションレジスター","comment":"チャプター②","sourceIndex":37},{"id":"a2182d416b76b439","front":"Cisco IOSが格納されているメモリはなんですか。","back":"フラッシュメモリ","comment":"チャプター②","sourceIndex":38},{"id":"e0e141611d7615a7","front":"今現在設定されている情報（設定ファイル）を確認するためのコマンドを回答してください。","back":"show running-config","comment":"チャプター②","sourceIndex":39},{"id":"ec307f8505fcd90a","front":"スイッチにて「192.168.1.254」をデフォルトゲートウェイとして設定する場合、どのモードからどのようなコマンドを実行する必要がありますか。","back":"(config)#ip default-gateway 192.168.1.254","comment":"チャプター②","sourceIndex":40},{"id":"89413f1d63c11f27","front":"スイッチはブロードキャストドメインの分割ができないため、fastethernet0/1や0/2といった物理インターフェイスに対してIPアドレスの設定はできません。\n代わりに、なんというインターフェイスにアドレスの設定を行う必要がありますか。","back":"管理インターフェイス\n管理VLAN\ninterface vlan 1","comment":"チャプター②","sourceIndex":41},{"id":"fc284afc18d28ac3","front":"すでに設定済のパスワード及び今後設定されるパスワードを暗号化するためのモードとコマンドを回答してください。","back":"(config)#service password-encryption","comment":"チャプター②","sourceIndex":42},{"id":"89dfb05538e37957","front":"PC0のデフォルトゲートウェイは①②③④のどこか","back":"②","comment":"チャプター②","sourceIndex":43},{"id":"f95fa2b7f418601f","front":"スタティックルートとダイナミックルートの違いを説明してください。","back":"スタティックは手動、ダイナミックはルーター間でやり取りを行い自動で宛先のルート情報をルーティングテーブルに登録","comment":"チャプター③","sourceIndex":44},{"id":"79cd992d0146fd72","front":"ルーティングテーブルを確認するためのコマンドを回答してください。","back":"show ip route","comment":"チャプター③","sourceIndex":45},{"id":"4712a47ab4cf51ee","front":"ルーターがパケットを受信したとき、ルーティングテーブル内に宛先IPアドレスに該当するルート情報が存在しなかった場合、どのような処理を行いますか。","back":"パケットを破棄し、送信元へ宛先到達不能のエラーメッセージを送信","comment":"チャプター③","sourceIndex":46},{"id":"3ec67293207a3409","front":"ルーターがパケットを受信したとき、ルーティングテーブル内に宛先IPアドレスに該当するルート情報が複数存在した場合、どのような処理を行いますか。","back":"ロンゲストマッチに基づき、最もネットワーク部が長く一致するルートを使用してルーティングを行う。","comment":"チャプター③","sourceIndex":47},{"id":"51079671a43076d2","front":"ルーティングテーブル内のルート情報に該当しないすべてのパケットを、ある特定のネクストホップへ転送するためのルートを何といいますか。","back":"デフォルトルート","comment":"チャプター③","sourceIndex":48},{"id":"9d74c31129ad1899","front":"RIP・OSPF・EIGRPのそれぞれのメトリックを回答してください。","back":"RIP:ホップ数。\nOSPF:コスト\nEIGRP:帯域幅・遅延（オプションで信頼性・負荷・MTUを追加可能）","comment":"チャプター③","sourceIndex":49},{"id":"9fe9dd35db73fe0c","front":"RIP・OSPF・EIGRPはそれぞれ何型と呼ばれていますか。","back":"RIP:ディスタンスベクター型\nOSPF:リンクステート型\nEIGRP:拡張ディスタンスベクター型（ハイブリッド型）","comment":"チャプター③","sourceIndex":50},{"id":"f5904efc6bbb7c6b","front":"RIP・OSPF・EIGRPがそれぞれルート計算に使用するアルゴリズムを回答してください。","back":"RIP:ベルマン-フォード法アルゴリズム\nOSPF:ダイクストラ(SPF)アルゴリズム\nEIGRP:DUAL","comment":"チャプター③","sourceIndex":51},{"id":"8a5df4e92868b437","front":"バックアップ用のスタティックルートのことを何と呼びますか。","back":"フローティングスタティックルート","comment":"チャプター③","sourceIndex":52},{"id":"bde61fa7f5aa9193","front":"経路集約のメリットを回答してください。","back":"情報交換の際にネットワークに負荷が小さくなる。\nルーティングの際にルーターにかかる負荷が小さくなる。\nトポロジー変更の際の影響範囲が小さくなる。","comment":"チャプター③","sourceIndex":53},{"id":"9178b7d132d20886","front":"下記ルートのデフォルトのアドミニストレーティブディスタンス値を回答してください。\n\n直接接続されたルート\nスタティックルート\nOSPF\nEIGRP\nRIP","back":"直接接続:0\nスタティック:1\nOSPF:110\nEIGRP:90\nRIP:120","comment":"チャプター③数値暗記","sourceIndex":54},{"id":"28bb398b6d8c73fa","front":"〇で囲った部分は何の情報を示しているか回答してください。","back":"アドミニストレーティブディスタンス値（AD値）","comment":"チャプター③数値暗記","sourceIndex":55},{"id":"81b6075c5c13fdcf","front":"EIGRPよりもOSPFが採用されやすい理由は何ですか。","back":"EIGRPはCiscoルーターでしか使用できないが、OSPFはシスコ以外のルーターでも使用可能","comment":"チャプター④","sourceIndex":56},{"id":"0eec2142cf0a94ac","front":"OSPFはエリアを使用することでネットワークを階層化できますが、\nその際中心となるエリアを何と呼びますか。","back":"バックボーンエリア","comment":"チャプター④","sourceIndex":57},{"id":"cc5f701657751d22","front":"OSPFにおいて、トポロジーテーブルは別名何と呼ばれますか。","back":"LSDB（リンクステートデータベース）","comment":"チャプター④","sourceIndex":58},{"id":"e692d259751dfc5e","front":"OSPFにおいて、ネイバーの発見や生存確認に使用されるパケットは何ですか。","back":"Helloパケット","comment":"チャプター④","sourceIndex":59},{"id":"2c9a36afca8f4865","front":"OSPFにおいて、マルチアクセス環境の場合トラフィックが多くなってしまうため、2台のルーターがその他のルーターとやり取りし、取りまとめます。\nそれを行う代表ルーター・バックアップ代表ルーターの名称をそれぞれ回答してください。","back":"代表:DR\nバックアップ:BDR","comment":"チャプター④","sourceIndex":60},{"id":"05f62f0590205d6f","front":"下記ルーターIDの優先項目を正しい順番に並び替えてください。\n・物理インターフェイスのIPアドレス\n・コマンドによる手動設定（router-id コマンド)\n・ループバックインターフェイスのIPアドレス","back":"①コマンドによる手動（router-id コマンド)\n②ループバックインターフェイスのIPアドレス\n③物理インターフェイスのIPアドレス","comment":"チャプター④","sourceIndex":61},{"id":"eafa83dc6a57e4e7","front":"OSPFにおいて、ネイバー関係構築のために隣接ルーターと合わせなければならない条件を最低2つ回答してください。","back":"Hello/Deadインターバル\nエリアID\nサブネットマスク\n認証情報\nスタブエリアフラグ","comment":"チャプター④","sourceIndex":62},{"id":"7a9fcae729c726df","front":"OSPFのネイバーテーブルを確認するためのコマンドを回答してください。","back":"show ip ospf neighbor","comment":"チャプター④","sourceIndex":63},{"id":"bbb9cec52c1bb1bd","front":"EIGRPで使用するテーブルを3種類回答してください。","back":"ネイバーテーブル\nトポロジーテーブル\nルーティングテーブル","comment":"チャプター④","sourceIndex":64},{"id":"4b36dbfb0ffe29c3","front":"EIGRPにおいて、ネイバー関係構築のために隣接ルーターと合わせなければならない条件を最低2つ回答してください。","back":"AS番号\nK値\nサブネットマスク","comment":"チャプター④","sourceIndex":65},{"id":"f451e3058b1e77d7","front":"EIGRPにおける最適（プライマリ）ルートとバックアップ用のルートをそれぞれ何と呼びますか。","back":"プライマリ:サクセサ\nバックアップ:フィージブルサクセサ","comment":"チャプター④","sourceIndex":66},{"id":"580b92be58f77fd4","front":"フィージブルサクセサになれる条件を回答してください。","back":"AD＜サクセサのFD","comment":"チャプター④","sourceIndex":67},{"id":"6957e41e048cee07","front":"バックボーンエリアのエリアIDを回答してください。","back":"0","comment":"チャプター④数値暗記","sourceIndex":68},{"id":"c338b58f20f04dde","front":"OSPFのデフォルトのルータープライオリティ値を回答してください。","back":"1","comment":"チャプター④数値暗記","sourceIndex":69},{"id":"386348aad9039af2","front":"OSPFのデフォルトのHello/Deadインターバルの秒数を回答してください。","back":"Hello:10\nDead:40","comment":"チャプター④数値暗記","sourceIndex":70},{"id":"3866e908cbac1ec5","front":"標準ACLと拡張ACLの違いを回答してください。","back":"標準:送信元IPアドレスのみ指定\n拡張:送信元/宛先IPアドレス、プロトコル、ポート番号が指定可能","comment":"チャプター⑤","sourceIndex":71},{"id":"dd4ece5cfe23ba7b","front":"ACL設定時の考慮事項を最低二つ回答してください。","back":"設定する順番、暗黙のDeny","comment":"チャプター⑤","sourceIndex":72},{"id":"995f6305b607bc88","front":"インバウンドとアウトバウンドの適用時の違いを回答してください。","back":"インバウンド:パケット受信時にフィルタリング。フィルタリングしてからルーティング\nアウトバウンド:パケット発信時（出ていくとき）にフィルタリング。ルーティング処理してからフィルタリング","comment":"チャプター⑤","sourceIndex":73},{"id":"597e05addfccfdd3","front":"標準ACL設定時、「192.168.1.1」からの通信のみを拒否するためのコマンドを教えてください。（番号は1）","back":"access-list 1 deny host 192.168.1.1","comment":"チャプター⑤","sourceIndex":74},{"id":"c921b7375a8957d3","front":"標準ACL設定時、「192.168.1.0/25」からの通信を許可するためのコマンドを教えてください。（番号は1）","back":"access-list 1 permit 192.168.1.0 0.0.0.127","comment":"チャプター⑤","sourceIndex":75},{"id":"97e79166452ab807","front":"拡張ACL設定時、pingコマンドを制御したい場合、プロトコルには何を指定しますか。","back":"icmp","comment":"チャプター⑤","sourceIndex":76},{"id":"172efe238d22427e","front":"アクセスリスト100を物理インターフェイスにインバウンドで適用するためのコマンドを回答してください。","back":"ip access-group 100 in","comment":"チャプター⑤","sourceIndex":77},{"id":"2c12c363a99ad4d3","front":"アクセスリスト1をVTY回線にインバウンドで適用するためのコマンドを回答してください。（VTYアクセス制御）","back":"access-class 1 in","comment":"チャプター⑤","sourceIndex":78},{"id":"18310f831c240ec5","front":"標準ACL、拡張ACLで使用できる番号の範囲をそれぞれ回答してください。","back":"標準:1~99、(1300~1999)\n拡張:100~199、(2000~2699)","comment":"チャプター⑤数値暗記","sourceIndex":79},{"id":"7c8c13533fd28b46","front":"アクセスポートとトランクポートの違いを教えてください。","back":"アクセス:一つのVLANのみに属する。PCやサーバーとつながったポートに設定\nトランク:複数のVLANに属する。スイッチ/ルーターとつながったポートに設定","comment":"チャプター⑥","sourceIndex":80},{"id":"6c023699a5058c14","front":"トランクポートでは、一つのリンク上で複数のVLANのやり取りを行うため、互いのスイッチ同士で流れるデータのVLAN情報を識別できる必要があります。\nVLAN情報を識別するために使用されるトランキングプロトコルには2種類ありますが、シスコ独自のものと業界標準化されているものをそれぞれ回答してください。","back":"シスコ独自:ISL\n業界標準:IEEE802.1Q","comment":"チャプター⑥","sourceIndex":81},{"id":"7fc76560fa32b1d3","front":"IEEE802.1Qの機能の一つで、タグをつけずにデータを送信することで識別を行う技術を何と呼びますか。","back":"ネイティブVLAN","comment":"チャプター⑥","sourceIndex":82},{"id":"964341f063c88ba2","front":"アクセスポート/トランクポートやトランキングプロトコルをネゴシエーションの結果に基づき自動で決定するプロトコルの名称を回答してください。","back":"DTP（ダイナミックトランキングプロトコル）","comment":"チャプター⑥","sourceIndex":83},{"id":"29bb4d01c019f1b8","front":"VLAN情報を同期するプロトコルの名称を回答してください。","back":"VTP（ブイラントランキングプロトコル）","comment":"チャプター⑥","sourceIndex":84},{"id":"6f398b398f4d1d8e","front":"アクセスポート設定時、インターフェイスに対して「VLAN100」を割り当てる場合に使用するコマンドを回答してください。","back":"switchport access vlan 100","comment":"チャプター⑥","sourceIndex":85},{"id":"ef6ef09a36d8d64b","front":"VLAN間ルーティングを行うために必要な機器を2つ回答して下さい。","back":"ルーター・L3スイッチ","comment":"チャプター⑥","sourceIndex":86},{"id":"34b2034c63b56246","front":"ルーターを使用したVLAN間ルーティングの構成を何と呼びますか。","back":"Router on a stick","comment":"チャプター⑥","sourceIndex":87},{"id":"99cbf0b2cb1cde53","front":"ルーターに設定できる、VLAN用のインターフェイスを何と呼びますか。","back":"サブインターフェイス","comment":"チャプター⑥","sourceIndex":88},{"id":"9e258a932bbec115","front":"L3スイッチに設定できる、VLAN用のインターフェイスを何と呼びますか。","back":"SVI（スイッチバーチャルインターフェイス）","comment":"チャプター⑥","sourceIndex":89},{"id":"6ba964e1ee97f0aa","front":"L3スイッチの物理インターフェイスに対して直接IPアドレスを設定したい場合、そのポートを何ポートに設定すればよいですか。","back":"ルーテッドポート","comment":"チャプター⑥","sourceIndex":90},{"id":"1458d3f41caf04ae","front":"VLANの特徴を2つ回答してください。","back":"①VLAN設定によりスイッチ単位でブロードキャストドメインの分割が可能になる為、通信効率を向上させることができる。\n②異なるVLAN番号で通信するには、ルーターやL3スイッチといったレイヤ3デバイスが必要になる。","comment":"チャプター⑥","sourceIndex":91},{"id":"32d869bc0ff9a88b","front":"スイッチにデフォルトで存在するVLAN番号を最低1つ回答してください。","back":"1、1002~1005","comment":"チャプター⑥数値暗記","sourceIndex":92},{"id":"a6bb0dfaabf9b92f","front":"スイッチのネイティブVLANはデフォルトではVLAN何番が設定されていますか。","back":"1","comment":"チャプター⑥数値暗記","sourceIndex":93},{"id":"8e22e7a9238ab3e2","front":"STPが作られた目的を回答してください。","back":"ブロードキャストストームの発生を防ぐため","comment":"チャプター⑦","sourceIndex":94},{"id":"3db0bb7d15ffd564","front":"現在のスイッチにおいて、STPはデフォルトで有効化されているため、スイッチを冗長接続をしてもブロードキャストストームは発生しない。\n上記説明は正しいですか？","back":"正しい","comment":"チャプター⑦","sourceIndex":95},{"id":"54895dcbca7df040","front":"STPにおける中心のスイッチを何と呼びますか。","back":"ルートブリッジ","comment":"チャプター⑦","sourceIndex":96},{"id":"0eec5db65f04e04f","front":"STPの状態遷移の順番として正しくなるように並び替えてください。\n\nリスニング、フォワーディング、ブロッキング、ラーニング","back":"ブロッキング→リスニング→ラーニング→フォワーディング","comment":"チャプター⑦ / メモ: ぶろりすらーふぉあ","sourceIndex":97},{"id":"5c96c58aabcf4407","front":"通常の状態遷移を経由せずにすぐにフォワーディング状態にし、通信を可能にする技術の名称を回答してください。","back":"PortFast","comment":"チャプター⑦","sourceIndex":98},{"id":"869d60cbfbf375bf","front":"本来BPDUを受け取るべきでないポート（PortFast設定ポート）にてBPDUを受け取ってしまった際に、ループを防ぐためにポートをエラーディセーブル状態でシャットダウンさせる機能の名称を回答してください。","back":"BPDUガード","comment":"チャプター⑦","sourceIndex":99},{"id":"234ef00f2b7d7a8a","front":"PortFastやRSTPといったプロトコルが開発された理由は何ですか。","back":"STPはコンバージェンスや障害復旧に時間がかかるため。\n（ブロッキングからフォワーディングまでに50秒）","comment":"チャプター⑦","sourceIndex":100},{"id":"e634ee6e062d98f4","front":"STPで使用されていた非指定ポートは、RSTPでは2種類に分割されました。\nそれぞれの名称を回答してください。","back":"代替ポート・バックアップポート","comment":"チャプター⑦","sourceIndex":101},{"id":"0d7ce940f9323a00","front":"STPで使用されていたステータス「ディセーブル」「ブロッキング」「リスニング」はそれぞれ、データ転送をしない・MACアドレスの学習をしないという共通点があることから、RSTPではある一つのステータスに統一されました。\nそのステータスの名称を回答してください。","back":"ディスカーディング","comment":"チャプター⑦","sourceIndex":102},{"id":"1ba7c127ce5e4b59","front":"スパニングツリーの状態を確認するためのコマンドを回答してください。","back":"show spanning-tree","comment":"チャプター⑦","sourceIndex":103},{"id":"2a705aeace369438","front":"EtherChannelのメリットを回答してください。","back":"帯域幅の増加・トラフィックの分散・耐障害性の向上","comment":"チャプター⑧","sourceIndex":104},{"id":"1bb66ded1ca733cc","front":"EtherChannelにはネゴシエーションプロトコルが2種類存在します。\nシスコ独自・業界標準のものをそれぞれ回答してください。","back":"シスコ独自:PAgP\n業界標準:LACP","comment":"チャプター⑧","sourceIndex":105},{"id":"77222e1aa4cd4054","front":"EtherChannelを手動で設定する際のモードを回答してください。","back":"on","comment":"チャプター⑧","sourceIndex":106},{"id":"d2c78df602edd8aa","front":"ギガビットイーサネットでつながったリンクを3本バンドル化すると、帯域幅はいくつになりますか。","back":"3Gbps(3000Mbps)","comment":"チャプター⑧","sourceIndex":107},{"id":"5c46404c928e07a3","front":"LACPを自分からネゴシエーションするモードに設定してチャネルグループ番号が１のEtherChannelを形成するコマンドを入力してください。","back":"chanel-group 1 mode active","comment":"チャプター⑧","sourceIndex":108},{"id":"7568c4d505603a48","front":"稼働中のポートで障害が発生してしまった際に、自動的に別のポートから振り分けてデータ送信を継続する仕組み・機能のことを何といいますか。","back":"フェイルオーバー","comment":"チャプター⑧","sourceIndex":109},{"id":"83f9b45b5afe1a4c","front":"Etherchannelは最大何本バンドル化できるか回答してください。","back":"8本","comment":"チャプター⑧","sourceIndex":110},{"id":"2c20e17182723c82","front":"ポートセキュリティとはどのような技術ですか。","back":"想定外の端末からの通信をスイッチでブロックする技術","comment":"チャプター⑨","sourceIndex":111},{"id":"bb29d0e815e5c759","front":"ポートセキュリティにおいて、正規のMACアドレスを何と呼びますか。","back":"セキュアMACアドレス","comment":"チャプター⑨","sourceIndex":112},{"id":"d71b0c6183497553","front":"自動で登録されたセキュアMACアドレスをrunning-configに保存する機能を何といいますか。","back":"スティッキーラーニング","comment":"チャプター⑨","sourceIndex":113},{"id":"af779f7be741a7d1","front":"ポートセキュリティの動作モードはデフォルトで何モードに設定されていますか。","back":"shutdown","comment":"チャプター⑨","sourceIndex":114},{"id":"893b21d1bd61f4d0","front":"1つのインターフェイスにつき登録できるセキュアMACアドレスの最大数は変更できますが、デフォルトではいくつでしょうか。","back":"1","comment":"チャプター⑨数値暗記","sourceIndex":115},{"id":"2690f0b2f5d4dc98","front":"HSRPとはどのようなプロトコルですか。","back":"複数台のルーターをグループ化し、デフォルトゲートウェイの冗長化を行う技術","comment":"チャプター⑩","sourceIndex":116},{"id":"d4035b6da08fe00e","front":"HSRPにおけるプライマリ（メイン）ルーターとバックアップルーターの名称をそれぞれ回答してください。","back":"メイン:アクティブルーター\nバックアップ:スタンバイルーター","comment":"チャプター⑩","sourceIndex":117},{"id":"7f7fb1ea77c012e8","front":"HSRPをスタンバイグループ0で設定した場合の仮想MACアドレスを回答してください。","back":"0000.0c07.ac00","comment":"チャプター⑩","sourceIndex":118},{"id":"539d110f16fe9305","front":"HSRPではプライオリティやIPアドレスは小さい方が優先される。\n上記説明は正しいですか。","back":"間違っている（大きい方が優先）","comment":"チャプター⑩","sourceIndex":119},{"id":"8c5a8b8d08d4b719","front":"HSRPの設定を下記要件で設定するコマンドを回答ください。\nスタンバイグループ番号:1\n仮想IPアドレス:192.168.1.254","back":"standby 1 ip 192.168.1.254","comment":"チャプター⑩","sourceIndex":120},{"id":"05354f3494c66a18","front":"プリエンプト機能を説明してください。","back":"プリエンプト機能は、後から追加した場合でも常にプライオリティ値が最大のルーターをアクティブルーターとして動作させる機能である","comment":"チャプター⑩","sourceIndex":121},{"id":"79fff11667beb382","front":"HSRPのデフォルトのプライオリティ値を回答してください。","back":"100","comment":"チャプター⑩数値暗記","sourceIndex":122},{"id":"d090a79c3766b50a","front":"NATとは何を目的した技術ですか。","back":"プライベートIPアドレスが設定されたLAN内のホストのインターネット接続を可能にする","comment":"チャプター⑪","sourceIndex":123},{"id":"dbf2457f8692ec9f","front":"NATによって変換された後のアドレスのことを何と呼びますか。","back":"内部グローバルアドレス","comment":"チャプター⑪","sourceIndex":124},{"id":"70c171900ee3c152","front":"NATの種類のうち、「1対1」「多対多」「1対多」の変換技術をそれぞれ回答してください。","back":"1対1:スタティックNAT\n多対多:ダイナミックNAT\n1対多:NAPT（PAT）","comment":"チャプター⑪","sourceIndex":125},{"id":"2aa50da6f51a48ee","front":"NAPTの「P」は何を指していますか。","back":"ポート番号","comment":"チャプター⑪","sourceIndex":126},{"id":"513e3f38a19632b3","front":"NAPT設定時、最後につけるキーワードを回答してください。","back":"overload","comment":"チャプター⑪","sourceIndex":127},{"id":"e28c7da088691bcc","front":"NATテーブルを確認するためのコマンドを回答してください。","back":"show ip nat translations","comment":"チャプター⑪","sourceIndex":128},{"id":"5a235b1036dc1abe","front":"DHCPについて説明してください。","back":"ホストにIPアドレスやデフォルトゲートウェイなどの設定を自動的に行うプロトコル","comment":"チャプター⑪","sourceIndex":129},{"id":"e857ba77b4296131","front":"クライアントから送られるDHCPメッセージはブロードキャストで行われるため、異なるネットワーク上に存在するDHCPサーバーへは届きません。\n異なるネットワーク上のサーバーへクライアントからのDHCPメッセージを転送するためには、ルーターに対して何の設定が必要ですか。","back":"DHCPリレーエージェント","comment":"チャプター⑪","sourceIndex":130},{"id":"2227c2d1f477b5bf","front":"IPv6はなぜ作られましたか。","back":"IPv4のアドレス枯渇問題を解決するため","comment":"チャプター⑫","sourceIndex":131},{"id":"a433641d2f3158cd","front":"IPv4で「ネットワーク部」「ホスト部」と呼ばれていた部分は、IPv6では何と呼ばれていますか。","back":"ネットワーク部:サブネットプレフィックス\nホスト部:インターフェイスID","comment":"チャプター⑫","sourceIndex":132},{"id":"807b37b49e59675c","front":"下記アドレスはIPv6アドレスとして正しいですか？\n2001::dd2:789g:1","back":"正しくない（16進数で使うアルファベットはa~fまで）","comment":"チャプター⑫","sourceIndex":133},{"id":"ecdb4a3dc9ece3eb","front":"下記アドレスはIPv6アドレスとして正しいですか？\n2001:0:0:dd2:789:0:1","back":"正しくない（7フィールドしかない）","comment":"チャプター⑫","sourceIndex":134},{"id":"2e907663fcd2f631","front":"下記アドレスはIPv6アドレスとして正しいですか？\n2001::d3d2:56e1::1","back":"正しくない（「::」が2か所使われている）","comment":"チャプター⑫","sourceIndex":135},{"id":"0634050fbdf9e3f9","front":"下記アドレスはIPv6アドレスとして正しいですか？\n2001:0:0:789:9021::1","back":"正しい","comment":"チャプター⑫","sourceIndex":136},{"id":"ada350292fd2cf44","front":"EUI64において、MACアドレスの中央に挿入する16進数を回答してください。","back":"FFFE","comment":"チャプター⑫","sourceIndex":137},{"id":"33733b9096d9f662","front":"IPv4のグローバルIPアドレスと同じく、インターネット上で一意なIPv6ユニキャストアドレスは何ですか。","back":"グローバルユニキャストアドレス","comment":"チャプター⑫","sourceIndex":138},{"id":"53a1589f3b58508b","front":"IPv4のプライベートIPアドレスと同じく、ローカル（LAN）でのみ有効なIPv6ユニキャストアドレスは何ですか。","back":"ユニークローカルユニキャストアドレス","comment":"チャプター⑫","sourceIndex":139},{"id":"0712653169980836","front":"同じサブネット(リンク)でのみ有効なIPv6ユニキャストアドレスは何ですか。","back":"リンクローカルユニキャストアドレス","comment":"チャプター⑫","sourceIndex":140},{"id":"7cb221e0c38ebf23","front":"IPv6で新たに追加された、下記アドレスは何ですか。\n複数のノードに同じアドレスを割り当て、ネットワーク的に最も近いところと通信する際に使用されるアドレス。","back":"エニーキャストアドレス","comment":"チャプター⑫","sourceIndex":141},{"id":"1cf968c340873cc7","front":"IPv6で新たに追加された、下記自動設定方法を何と言いますか。\nルーターがLAN上のホストに対してネットワークアドレスを送信し、ホスト側で受信したネットワークアドレスとホストのMACアドレスから一意のIPv6アドレスを生成する方法","back":"SLAAC(ステートレスアドレス自動設定)","comment":"チャプター⑫","sourceIndex":142},{"id":"5a96751afd581a77","front":"IPv6ルーティングを有効化するためのコマンドを回答してください。","back":"ipv6 unicast-routing","comment":"チャプター⑫","sourceIndex":143},{"id":"655186f56d719597","front":"IPv6は何ビットのアドレスですか。","back":"128","comment":"チャプター⑫数値暗記","sourceIndex":144},{"id":"d9d3f8729a0b45f7","front":"1対1で接続したトポロジーを何と言いますか。","back":"ポイントツーポイント","comment":"チャプター⑬","sourceIndex":145},{"id":"4b7a5c18750c0a15","front":"専用線サービスの特徴を最低3つ回答してください。","back":"・帯域は100%保証されほかのユーザーの影響をうけないため、通信品質が高い\n・セキュリティが高い\n・専門的な技術が要求されない\n・コストが高い\n・拡張性が低い","comment":"チャプター⑬","sourceIndex":146},{"id":"994eb992b296e658","front":"PAPとCHAPの違いを説明してください。","back":"PAP:2ウェイハンドシェイク。暗号化なし\nCHAP:3ウェイハンドシェイク。暗号化あり","comment":"チャプター⑬","sourceIndex":147},{"id":"4452062c84ab8729","front":"現在WANの中核を担う技術の一つで、インターネット等の公共回線上でトンネリングと暗号化を行うことで、それぞれの拠点のLAN同士が直接つながっているように見せかける技術の名称を回答してください。","back":"VPN","comment":"チャプター⑬","sourceIndex":148},{"id":"eaf9de348ec60aa7","front":"インターネットVPNでよく使用される、「データの完全性」「機密性」「認証」「リプレイ攻撃防止」を実現するセキュリティプロトコルを何といいますか。","back":"IPsec","comment":"チャプター⑬","sourceIndex":149},{"id":"1d98a817c351ed87","front":"下記はAuthentication、Authorization、Accountingのうちどれに該当しますか。\nユーザーIDやパスワードなどの情報を基にアクセスが許可されたユーザーなのかどうかの確認を行う","back":"Authentication(認証)","comment":"チャプター⑭","sourceIndex":150},{"id":"930c82113648144a","front":"外部ネットワークから企業や家庭内のネットワークを守るためのソフトウェア・機器は何ですか。","back":"ファイアウォール","comment":"チャプター⑭","sourceIndex":151},{"id":"80c4eb8429701f24","front":"ファイアウォールの機能の一つで、内部から外部へ向けて送信した通信に対する戻りの通信の通過を許可する機能はなんですか。","back":"ステートフルインスペクション","comment":"チャプター⑭","sourceIndex":152},{"id":"d5ed21d8bcedb107","front":"MD5、SHA-256、Scryptのうち、最もセキュリティレベルが高いアルゴリズムはどれですか。","back":"Scrypt","comment":"チャプター⑭","sourceIndex":153},{"id":"680e63ee034fc2dc","front":"知識要素・所持要素・生体要素の3つの認証要素の中から異なる認証情報を複数組み合わせた認証方式をなんといいますか。","back":"多要素認証","comment":"チャプター⑭","sourceIndex":154},{"id":"a14bfba0664b18b7","front":"ワイヤレスLANにおいてコリジョンを制御するために使用される制御方式は何ですか。","back":"CSMA/CA方式","comment":"チャプター⑮","sourceIndex":155},{"id":"4e9bdf462c7e25fe","front":"ワイヤレスLANにおいてクライアント同士や有線LANへの接続を可能にする機器は何ですか。","back":"AP(アクセスポイント)","comment":"チャプター⑮","sourceIndex":156},{"id":"bbc4b1d9161ac897","front":"今現在ワイヤレスLANで最も普及しているセキュリティ規格「WPA2」にて使用される暗号化方式は何ですか。","back":"AES","comment":"チャプター⑮","sourceIndex":157},{"id":"cc551543a2d12e60","front":"SSHのRSA暗号鍵の設定をする際に、事前に必要な設定を2つ回答してください。","back":"ホスト名・ドメイン名","comment":"チャプター⑯","sourceIndex":158},{"id":"e9b50e793da6486e","front":"CDPとLLDPの違いを説明してください。","back":"CDP:シスコ独自\nLLDP:業界標準","comment":"チャプター⑯","sourceIndex":159},{"id":"3dc0e50d414d8c5f","front":"シスコルーターをNTPサーバーとして設定するためのコマンドを回答してください。","back":"ntp master","comment":"チャプター⑯","sourceIndex":160},{"id":"709e955164919a4a","front":"コンフィギュレーションレジスタのデフォルトの値とパスワードリカバリーを行う際の値をそれぞれ回答してください。","back":"デフォルト:0x2102\nパスワードリカバリ:0x2142","comment":"チャプター⑯","sourceIndex":161},{"id":"c81591b252740f94","front":"Cisco機器操作中に現在のコンフィギュレーションをstartup-configに保存するコマンドを回答してください。","back":"copy running-config startup-config","comment":"チャプター⑯","sourceIndex":162}]},{"id":"builtin_ccna_1st_round_weakness","name":"CCNA 1周目 弱点補強問題集","description":"追加CSV「ccna_1st_round_weakness_question_bank.csv」から作成した問題集。","createdAt":"2026-05-25","questionCount":155,"questions":[{"id":"86e4f010b5dde04c","front":"【HSRP】HSRPの主な目的は何か？","back":"デフォルトゲートウェイの冗長化。PCは実ルータのIPではなく仮想IPをデフォルトゲートウェイに設定し、Activeルータ障害時はStandbyルータが引き継ぐ。","comment":"HSRP/基礎/重要","sourceIndex":1},{"id":"5fdffa1d6c4ffdc8","front":"【HSRP】PCのデフォルトゲートウェイに設定すべきIPアドレスはどれか？\nA. Activeルータの実IP\nB. Standbyルータの実IP\nC. HSRPの仮想IP\nD. スイッチの管理IP","back":"C. HSRPの仮想IP。HSRPではクライアントは仮想IPをGWとして使う。Active/Standbyの実IPをGWにすると冗長化の意味が薄れる。","comment":"HSRP/仮想IP/選択問題","sourceIndex":2},{"id":"a43e5dec8dae90e2","front":"【HSRP】R1のpriorityが110、R2のpriorityが100の場合、通常Activeになるのはどちらか？","back":"R1。HSRPはpriorityが高いルータがActiveになる。デフォルトpriorityは100。","comment":"HSRP/priority","sourceIndex":3},{"id":"0d0b263638c5fb2b","front":"【HSRP】HSRPでpriorityが同じ場合、Active選出の最後の判定材料は何か？","back":"インターフェイスの実IPアドレス。priorityが同じなら、IPアドレスが大きい方がActiveになる。","comment":"HSRP/Active選出","sourceIndex":4},{"id":"76d83d5e6463c50e","front":"【HSRP】R1 priority 110、R2 priority 100。R1が障害で停止し、R2がActiveになった。その後R1が復旧したがpreemptなし。Activeはどうなる？","back":"R2のまま。HSRPではpreemptがないと、優先度が高いルータが復旧してもActiveを奪い返さない。","comment":"HSRP/preempt/頻出","sourceIndex":5},{"id":"5dd341b0115ecc03","front":"【HSRP】`standby 1 preempt` は何のためのコマンドか？","back":"優先度が高いルータが復旧したとき、再びActiveになれるようにするためのコマンド。インターフェイスコンフィギュレーションモードで設定する。","comment":"HSRP/preempt/コマンド","sourceIndex":6},{"id":"f22cb69cdbb3d018","front":"【HSRP】HSRPの基本設定 `standby 1 ip 192.168.1.254` はどのモードで実行するか？","back":"インターフェイスコンフィギュレーションモード。HSRPは対象LANに接続するインターフェイスに設定する。","comment":"HSRP/実行モード","sourceIndex":7},{"id":"66a84b6700c9cce5","front":"【HSRP】次のうちHSRPを有効化するコマンドはどれか？\nA. standby 1 ip 192.168.1.254\nB. hsrp enable\nC. ip hsrp 1 192.168.1.254\nD. vrrp 1 ip 192.168.1.254","back":"A. `standby 1 ip 192.168.1.254`。Cisco IOSではHSRPのコマンドは `standby` から始まる。","comment":"HSRP/コマンド/選択問題","sourceIndex":8},{"id":"268bed141a8d7022","front":"【HSRP】`standby 1 priority 120` の意味は？","back":"HSRPグループ1のpriorityを120にする。priorityが高い方がActiveになりやすい。デフォルトは100。","comment":"HSRP/priority/コマンド","sourceIndex":9},{"id":"e40dc7760d570312","front":"【HSRP】`standby 1 track g0/1 20` の意味は？","back":"G0/1がダウンしたら、HSRPグループ1のpriorityを20下げる。上流回線障害時にActiveを別ルータへ移すために使う。","comment":"HSRP/interface tracking","sourceIndex":10},{"id":"f4f135c21ccfc783","front":"【HSRP】インターフェイストラッキングを設定する主な理由は？","back":"LAN側は生きているがWAN側/上流側が落ちたルータをActiveのままにしないため。上流障害時にpriorityを下げ、別ルータへActiveを移す。","comment":"HSRP/interface tracking/概念","sourceIndex":11},{"id":"0cab3a2f22b98402","front":"【HSRP】HSRPの要約情報を確認する代表的なコマンドは？","back":"`show standby brief`。Active/Standby、仮想IP、priority、グループ番号などを簡潔に確認できる。","comment":"HSRP/確認コマンド/重要","sourceIndex":12},{"id":"c25bd85f3e65864f","front":"【HSRP】HSRPの詳細情報を確認するコマンドは？","back":"`show standby`。state、priority、preempt、track、タイマー、仮想MACなどを詳細に確認できる。","comment":"HSRP/確認コマンド","sourceIndex":13},{"id":"4948de2f5a6a8156","front":"【HSRP】HSRPは標準規格か、Cisco独自か？","back":"Cisco独自。標準系のFHRPはVRRP。GLBPもCisco独自。","comment":"HSRP/標準と独自","sourceIndex":14},{"id":"0302c8f6056ed8c9","front":"【HSRP】FHRPとは何の冗長化技術の総称か？","back":"First Hop Redundancy Protocol。端末から見た最初のルータ、つまりデフォルトゲートウェイを冗長化する技術の総称。HSRP、VRRP、GLBPなどがある。","comment":"HSRP/FHRP","sourceIndex":15},{"id":"4c48457aabbb8a51","front":"【HSRP】HSRPの状態で、実際にパケット転送を担当する状態は？","back":"Active。仮想IP/MAC宛ての通信を実際に転送する。StandbyはActive障害時に引き継ぐ待機状態。","comment":"HSRP/状態遷移","sourceIndex":16},{"id":"0e849b4661ad316a","front":"【HSRP】HSRPの主な状態を6つ挙げると？","back":"Initial、Learn、Listen、Speak、Standby、Active。CCNAでは特にActiveとStandbyの役割を押さえる。","comment":"HSRP/状態遷移/暗記","sourceIndex":17},{"id":"95436975aac71cd2","front":"【HSRP】HSRP version 1で使用できるグループ番号の範囲は？","back":"0〜255。HSRP version 2では0〜4095まで使用できる。","comment":"HSRP/グループ番号","sourceIndex":18},{"id":"8f85358a72774bd2","front":"【HSRP】HSRP version 2で使用できるグループ番号の範囲は？","back":"0〜4095。version 1は0〜255。問題文にversionがあるか確認する。","comment":"HSRP/グループ番号","sourceIndex":19},{"id":"bad4374a0876a477","front":"【HSRP】HSRPのデフォルトpriorityはいくつか？","back":"100。priorityが高い方がActiveになり、同じ場合はIPアドレスが大きい方がActiveになる。","comment":"HSRP/デフォルト値","sourceIndex":20},{"id":"472f07dccf5b88b5","front":"【HSRP】HSRPのデフォルトHelloタイマーとHoldタイマーは？","back":"Hello 3秒、Hold 10秒。STPのHello 2秒と混同しない。","comment":"HSRP/タイマー","sourceIndex":21},{"id":"d75a20ad0375ef0f","front":"【HSRP】HSRPで仮想IPと実IPは同じにしてよいか？","back":"通常は同じにしない。各ルータは実IPを持ち、HSRPグループとして共有する別の仮想IPを設定する。","comment":"HSRP/設計","sourceIndex":22},{"id":"badfacdb02088b53","front":"【HSRP】HSRPを設定する2台のルータで、仮想IPは同じにする？別々にする？","back":"同じにする。同じHSRPグループ内で同じ仮想IPを共有する。実IPは各ルータで別々にする。","comment":"HSRP/仮想IP","sourceIndex":23},{"id":"ed7361519ea068a6","front":"【HSRP】`show standby brief`でR1がActive、R2がStandbyと表示された。PCのGWはR1の実IPに変えるべきか？","back":"変えない。PCのGWは常にHSRPの仮想IP。Activeが変わってもPC側の設定を変更しなくてよいのがHSRPの利点。","comment":"HSRP/運用","sourceIndex":24},{"id":"9b19a3a86ab7c017","front":"【IOSモード】`hostname R1` はどのモードで実行するか？","back":"グローバルコンフィギュレーションモード。プロンプト例は `Router(config)#`。","comment":"IOS/実行モード","sourceIndex":25},{"id":"4114d071f4aa05af","front":"【IOSモード】インターフェイスにIPアドレスを設定する `ip address ...` はどのモードで実行するか？","back":"インターフェイスコンフィギュレーションモード。例：`Router(config-if)#`。","comment":"IOS/実行モード/IPアドレス","sourceIndex":26},{"id":"90843f7f85c5f1ae","front":"【IOSモード】`no shutdown` はどのモードで実行するか？","back":"インターフェイスコンフィギュレーションモード。対象インターフェイスを管理的に有効化する。","comment":"IOS/実行モード","sourceIndex":27},{"id":"69b6d2f2a68f5998","front":"【IOSモード】`transport input ssh` はどのモードで実行するか？","back":"line vtyコンフィギュレーションモード。例：`line vty 0 4` の下で設定する。","comment":"SSH/VTY/実行モード","sourceIndex":28},{"id":"9b94885f01c52170","front":"【SSH】SSH接続を許可するためにVTYで設定する代表コマンドは？","back":"`transport input ssh`。通常は `login local` とローカルユーザー、RSA鍵、ドメイン名設定も必要。","comment":"SSH/VTY/コマンド","sourceIndex":29},{"id":"6833458621bb83d9","front":"【SSH】`ip domain-name example.local` はどのモードで実行するか？","back":"グローバルコンフィギュレーションモード。RSA鍵生成の前提として設定することが多い。","comment":"SSH/実行モード","sourceIndex":30},{"id":"589dfd7ed238e8f4","front":"【SSH】`crypto key generate rsa` はどのモードで実行するか？","back":"グローバルコンフィギュレーションモード。SSHで使うRSA鍵を生成する。","comment":"SSH/実行モード","sourceIndex":31},{"id":"d64de240500c2a5d","front":"【SSH】`username admin secret cisco123` はどのモードで実行するか？","back":"グローバルコンフィギュレーションモード。`login local` と組み合わせてVTYログイン認証に使う。","comment":"SSH/ユーザー設定","sourceIndex":32},{"id":"66d492a03d2d8615","front":"【IOS】拡張pingを実行する代表的なモードは？","back":"特権EXECモード。`ping` と入力して対話式に送信元IPや回数などを指定する。","comment":"IOS/確認コマンド/拡張ping","sourceIndex":33},{"id":"bcad9241c8ce0a6b","front":"【IOS】設定内容を確認する `show running-config` はどのモードで実行するか？","back":"特権EXECモード。`Router#` の状態で実行する。","comment":"IOS/showコマンド","sourceIndex":34},{"id":"c02bba536b4f1f9f","front":"【IOS】現在のルーティングテーブルを確認するコマンドは？","back":"`show ip route`。スタティック、OSPF、EIGRP、直接接続などの経路を確認する基本コマンド。","comment":"ルーティング/確認コマンド","sourceIndex":35},{"id":"dff6419c5c1a06cb","front":"【IOS】スタティックルート設定をrunning-config上で確認する代表的な方法は？","back":"`show running-config | include ip route` または `show running-config`。ルーティングテーブル上では `show ip route static` も有効。","comment":"スタティックルート/確認","sourceIndex":36},{"id":"3b3bdc1bb31c3ec8","front":"【IOSモード】`router ospf 1` はどのモードから実行するか？","back":"グローバルコンフィギュレーションモード。実行後にrouter configモードへ入る。","comment":"OSPF/実行モード","sourceIndex":37},{"id":"cec1314860499313","front":"【OSPF】`network 192.168.1.0 0.0.0.255 area 0` はどのモードで実行するか？","back":"OSPFルータコンフィギュレーションモード。`router ospf <process-id>` の下で実行する。","comment":"OSPF/実行モード","sourceIndex":38},{"id":"8ca9521e0726f81f","front":"【OSPF】`ip ospf cost 50` はどのモードで実行するか？","back":"インターフェイスコンフィギュレーションモード。OSPFのコストは対象インターフェイスに設定する。","comment":"OSPF/コスト/実行モード","sourceIndex":39},{"id":"bff144ad02d5fe49","front":"【OSPF】`ip ospf dead-interval 40` はどのモードで実行するか？","back":"インターフェイスコンフィギュレーションモード。Hello/Dead intervalは対象インターフェイスで調整する。","comment":"OSPF/タイマー/実行モード","sourceIndex":40},{"id":"25a2f345608510be","front":"【EIGRP】EIGRPのAS番号やK値を確認できる代表コマンドは？","back":"`show ip protocols`。有効なルーティングプロトコル、AS番号、K値、AD、network文などを確認できる。","comment":"EIGRP/確認コマンド","sourceIndex":41},{"id":"43d75f335e7cb222","front":"【DHCP】DHCPプール内でデフォルトゲートウェイを配布するコマンドは？","back":"`default-router <IPアドレス>`。`ip default-gateway` ではない点に注意。DHCP poolモードで設定する。","comment":"DHCP/コマンド/頻出","sourceIndex":42},{"id":"b03e2803a5bdb4e1","front":"【DHCP】`default-router 192.168.1.1` はどのモードで実行するか？","back":"DHCP poolコンフィギュレーションモード。例：`ip dhcp pool LAN10` の下で設定する。","comment":"DHCP/実行モード","sourceIndex":43},{"id":"aa78b54a54e5ba41","front":"【OSI/TCP-IP】OSI参照モデルに「インターネット層」は存在するか？","back":"存在しない。インターネット層はTCP/IPモデルの層。OSIでは近い役割はネットワーク層。","comment":"ネットワーク基礎/モデル","sourceIndex":44},{"id":"7e52b997928fdda0","front":"【ルーティング】eBGPのAD値はいくつか？","back":"20。参考：Connected 0、Static 1、EIGRP内部 90、OSPF 110、RIP 120、iBGP 200。","comment":"ルーティング/AD値","sourceIndex":45},{"id":"139822e7a35dd7d8","front":"【ルーティング】AD値が小さいほど優先される？大きいほど優先される？","back":"小さいほど優先される。ADは経路情報源の信頼度を表す値。","comment":"ルーティング/AD値","sourceIndex":46},{"id":"facdae398fa56f8f","front":"【経路集約】経路集約のメリットを2つ以上挙げると？","back":"ルーティングテーブル削減、経路広告量の削減、トポロジ変化の影響範囲縮小、上位ネットワーク構成の隠蔽など。","comment":"ルーティング/経路集約","sourceIndex":47},{"id":"e9d479427b06e43a","front":"【スタティックルート】`ip route 0.0.0.0 0.0.0.0 192.168.1.254` は何を設定しているか？","back":"デフォルトルート。ルーティングテーブルにより具体的な経路がない宛先を、次ホップ192.168.1.254へ送る。","comment":"ルーティング/スタティック","sourceIndex":48},{"id":"ab07b04944b76daa","front":"【OSPF】OSPFのHello/Dead intervalが隣接ルータ間で一致しない場合、何が起きやすいか？","back":"ネイバー関係が確立しない、または維持できない。OSPFではエリア、認証、Hello/Deadなどの一致が重要。","comment":"OSPF/ネイバー","sourceIndex":49},{"id":"1eb527c8302e5967","front":"【OSPF】OSPFのコストを直接変更するコマンドは？","back":"インターフェイスで `ip ospf cost <値>`。帯域幅から自動計算させる方法とは別に、明示的にコストを指定できる。","comment":"OSPF/コマンド","sourceIndex":50},{"id":"a5592ce7797b4c0b","front":"【OSPF】OSPFのインターフェイス状態やHello/Deadを確認するコマンドは？","back":"`show ip ospf interface` または特定IFなら `show ip ospf interface g0/0`。Hello/Dead、コスト、ネットワークタイプなどを確認できる。","comment":"OSPF/確認コマンド","sourceIndex":51},{"id":"d8bc920652c53d74","front":"【EIGRP】EIGRPのメトリック計算で使われるK値を確認するコマンドは？","back":"`show ip protocols`。K1〜K5の値が表示される。","comment":"EIGRP/確認コマンド","sourceIndex":52},{"id":"01f9668a4e657d48","front":"【ACL】標準ACLで主に条件にできるのは何か？","back":"送信元IPアドレス。標準ACLは宛先IPやポート番号までは基本的に見ない。","comment":"ACL/標準ACL","sourceIndex":53},{"id":"03cb02aa34eb5a1f","front":"【ACL】拡張ACLで条件にできるものを3つ挙げると？","back":"送信元IP、宛先IP、プロトコル、送信元/宛先ポート番号など。標準ACLより細かく制御できる。","comment":"ACL/拡張ACL","sourceIndex":54},{"id":"54e34491c46a85b1","front":"【ACL】ACLの最後には暗黙的に何があるか？","back":"`deny any`。明示的に許可されなかった通信は最後に拒否される。","comment":"ACL/暗黙のdeny","sourceIndex":55},{"id":"9c7677188e490c1f","front":"【ACL】インターフェイスにACLを適用するコマンドは？","back":"`ip access-group <ACL番号または名前> in|out`。インターフェイスコンフィギュレーションモードで設定する。","comment":"ACL/適用コマンド","sourceIndex":56},{"id":"2ded4cef6152f816","front":"【ACL】VTYアクセス制御に使うコマンドは `ip access-group` か `access-class` か？","back":"`access-class`。VTY lineでSSH/Telnetログイン元を制限するときに使う。","comment":"ACL/VTY/頻出","sourceIndex":57},{"id":"a1954c8386beb6d5","front":"【ACL】`line vty 0 4` で `access-class 10 in` とした。この `in` は何を意味するか？","back":"外部端末からルータ/スイッチのVTYへ入ってくる管理アクセスを制御する方向。SSH/Telnet接続元の制御でよく使う。","comment":"ACL/VTY/in-out","sourceIndex":58},{"id":"4961e44261e424d8","front":"【ACL】標準番号付きACLの一般的な番号範囲は？","back":"1〜99、拡張範囲は1300〜1999。拡張ACLは100〜199、拡張範囲は2000〜2699。","comment":"ACL/番号範囲","sourceIndex":59},{"id":"52b75e7233fcb028","front":"【ACL】標準ACLは送信元に近い場所と宛先に近い場所のどちらに置くのが原則か？","back":"宛先に近い場所。標準ACLは送信元しか見ないため、送信元近くに置くと不要な宛先までまとめて遮断しやすい。","comment":"ACL/配置原則","sourceIndex":60},{"id":"f6483410d2d7c11e","front":"【ACL】拡張ACLは送信元に近い場所と宛先に近い場所のどちらに置くのが原則か？","back":"送信元に近い場所。不要な通信を早めに止められ、宛先やポートまで細かく条件指定できる。","comment":"ACL/配置原則","sourceIndex":61},{"id":"109d1e6e369146bb","front":"【VLAN】VLANを作成する `vlan 10` はどのモードで実行するか？","back":"グローバルコンフィギュレーションモード。実行後にVLANコンフィギュレーションモードへ入る。","comment":"VLAN/実行モード","sourceIndex":62},{"id":"2f8086b226947058","front":"【VLAN】アクセスポートにVLAN 10を割り当てるコマンドは？","back":"インターフェイスで `switchport mode access` と `switchport access vlan 10` を設定する。","comment":"VLAN/access port/コマンド","sourceIndex":63},{"id":"01c41b337770bb65","front":"【VLAN】トランクポートにする代表コマンドは？","back":"インターフェイスで `switchport mode trunk`。必要に応じて `switchport trunk allowed vlan ...` やnative VLANも設定する。","comment":"VLAN/trunk/コマンド","sourceIndex":64},{"id":"f68a58fe1d29b15c","front":"【VLAN】トランクで複数VLANを識別するために付与される情報は？","back":"VLANタグ。Cisco/IEEE 802.1QではフレームにVLAN ID情報を付けて転送する。","comment":"VLAN/802.1Q","sourceIndex":65},{"id":"a4d0a94beec7e8dd","front":"【VLAN】SVIを作成するコマンドはどれか？\nA. vlan 10\nB. interface vlan 10\nC. switchport vlan 10\nD. ip vlan 10","back":"B. `interface vlan 10`。`vlan 10` はVLAN自体の作成、`interface vlan 10` はSVIの作成/設定。","comment":"VLAN/SVI/選択問題","sourceIndex":66},{"id":"17aa986eb99c4109","front":"【VLAN】SVIにIPアドレスを設定する目的を2つ挙げると？","back":"スイッチの管理IPとして使う、またはL3スイッチでVLAN間ルーティングのデフォルトゲートウェイとして使う。","comment":"VLAN/SVI/用途","sourceIndex":67},{"id":"af1c25762f587fa0","front":"【L3スイッチ】L3スイッチの物理ポートにIPアドレスを設定したい。先に必要なコマンドは？","back":"`no switchport`。スイッチポートをルーテッドポートに変更してから `ip address` を設定する。","comment":"L3スイッチ/routed port","sourceIndex":68},{"id":"38cd1d8b5963a6f7","front":"【L3スイッチ】VLAN間ルーティングを有効にするL3スイッチのグローバルコマンドは？","back":"`ip routing`。L3スイッチでSVI間のルーティングを行うために必要。","comment":"L3スイッチ/VLAN間ルーティング","sourceIndex":69},{"id":"bf51fe96cf915341","front":"【VLAN】L2スイッチの通常のアクセスポートにIPアドレスを設定できるか？","back":"原則できない。管理IPはSVIに設定する。L3スイッチでは `no switchport` したルーテッドポートならIP設定できる。","comment":"VLAN/L2-L3比較","sourceIndex":70},{"id":"c41d6f0004b30f02","front":"【VLAN】VLANを使うメリットを2つ以上挙げると？","back":"ブロードキャストドメインの分割、部署/用途ごとの論理分離、セキュリティ向上、柔軟なネットワーク設計など。","comment":"VLAN/メリット","sourceIndex":71},{"id":"a340c903aa6a15e8","front":"【VTP】VTP transparentモードの特徴は？","back":"他スイッチのVTP情報で自分のVLAN DBを同期しない。ローカルでVLAN作成/削除が可能。VTP広告は転送する。","comment":"VTP/transparent","sourceIndex":72},{"id":"c16c159b5968b6da","front":"【VTP】VTPでVLAN情報を同期する代表的なモードの組み合わせは？","back":"serverとclient。serverで作成したVLAN情報をclientへ配布する。transparentは同期しない。","comment":"VTP/モード","sourceIndex":73},{"id":"63f81c40399be3c4","front":"【DTP】動的にトランク形成を交渉するCiscoのプロトコルは？","back":"DTP（Dynamic Trunking Protocol）。`dynamic desirable` や `dynamic auto` で関係する。","comment":"VLAN/DTP","sourceIndex":74},{"id":"8879f3ff10e6006e","front":"【DTP】`switchport nonegotiate` の目的は？","back":"DTPの送信を止める。明示的にトランク設定し、相手と自動交渉させたくない場合に使う。","comment":"VLAN/DTP/コマンド","sourceIndex":75},{"id":"56dc5037563734f9","front":"【STP】STPの主な目的は何か？","back":"L2ループを防止すること。冗長リンクがあるスイッチネットワークで、ループしない論理ツリーを作る。","comment":"STP/基礎","sourceIndex":76},{"id":"a8d419349efab4b8","front":"【STP】ルートブリッジはどのように選出されるか？","back":"Bridge IDが最小のスイッチ。Bridge IDは主にpriorityとMACアドレスから構成される。","comment":"STP/ルートブリッジ","sourceIndex":77},{"id":"d827cfc15a293675","front":"【STP】Bridge IDの比較で、priorityが同じ場合は何で決まるか？","back":"MACアドレスが小さい方がルートブリッジになりやすい。Bridge IDが小さいほど優先。","comment":"STP/Bridge ID","sourceIndex":78},{"id":"ecc8e4311e1e7a7e","front":"【STP】STPのHelloタイマーのデフォルト値は？","back":"2秒。HSRPのHello 3秒と混同しない。","comment":"STP/タイマー","sourceIndex":79},{"id":"36fd7bcc3d1c6070","front":"【STP】BPDU Guardをインターフェイス単位で有効化するコマンドは？","back":"インターフェイスで `spanning-tree bpduguard enable`。PortFastポートでBPDUを受信した場合にerr-disableにする。","comment":"STP/BPDU Guard/コマンド","sourceIndex":80},{"id":"e9c3c44ecc539384","front":"【STP】BPDU Guardはどのようなポートに設定するのが一般的か？","back":"PCなど端末接続用のPortFastアクセスポート。スイッチが接続される可能性のあるポートに安易に設定しない。","comment":"STP/BPDU Guard/設計","sourceIndex":81},{"id":"9ca874d90639f499","front":"【STP】Root Guardをインターフェイスに設定するコマンドは？","back":"`spanning-tree guard root`。想定外のスイッチがRoot Bridgeになるのを防ぐ。","comment":"STP/Root Guard/コマンド","sourceIndex":82},{"id":"9eb3a6144dc55aa7","front":"【STP】Root Guardの目的は？","back":"想定外の優先度の高いBPDUを受け取っても、その方向にRoot Bridgeを移さないようにすること。","comment":"STP/Root Guard/概念","sourceIndex":83},{"id":"bf579ec2d7581239","front":"【STP】PortFastをアクセスポートで有効化するコマンドは？","back":"インターフェイスで `spanning-tree portfast`。端末接続ポートをすばやくForwardingへ移行させる。","comment":"STP/PortFast/コマンド","sourceIndex":84},{"id":"e7d4e691b168d683","front":"【STP】PortFastをスイッチ間トランクに安易に設定してよいか？","back":"原則よくない。PortFastは端末接続ポート向け。スイッチ間で誤用するとループリスクが高くなる。","comment":"STP/PortFast/注意","sourceIndex":85},{"id":"d79661244001b6c4","front":"【STP】STPでルートポートはどのスイッチに存在するか？","back":"非ルートブリッジに存在する。ルートブリッジへ最も近い方向のポートがルートポートになる。ルートブリッジ自身にはルートポートはない。","comment":"STP/ポート役割","sourceIndex":86},{"id":"d2f6b8716117a470","front":"【STP】STPの基本的なポート役割を3つ挙げると？","back":"Root Port、Designated Port、Alternate Port。従来STPではBlockingなどの状態も合わせて問われやすい。","comment":"STP/ポート役割","sourceIndex":87},{"id":"078ebd5a1a3757a3","front":"【STP】STPのBlockingポートはユーザーデータを転送するか？","back":"転送しない。ループ防止のためにブロックされているが、BPDUの受信などは行う。","comment":"STP/ポート状態","sourceIndex":88},{"id":"ccf2e11a6c0fc885","front":"【EtherChannel】EtherChannelの目的は？","back":"複数の物理リンクを1本の論理リンクとして束ね、帯域増加と冗長化を実現すること。","comment":"EtherChannel/基礎","sourceIndex":89},{"id":"3f2d5688e433025e","front":"【EtherChannel】LACPは標準規格かCisco独自か？","back":"標準規格。LACPはIEEE 802.3ad/802.1AX系。PAgPはCisco独自。","comment":"EtherChannel/LACP-PAgP","sourceIndex":90},{"id":"cdb7f39370f07ad3","front":"【EtherChannel】PAgPは標準規格かCisco独自か？","back":"Cisco独自。標準のリンク集約プロトコルはLACP。","comment":"EtherChannel/LACP-PAgP","sourceIndex":91},{"id":"4939aab5c27cd8c9","front":"【Port Security】ポートセキュリティはどのモードで設定するか？","back":"インターフェイスコンフィギュレーションモード。アクセスポートに対して設定するのが基本。","comment":"Port Security/実行モード","sourceIndex":92},{"id":"741cdca7e0fd519c","front":"【Port Security】最大MACアドレス数を指定するコマンドは？","back":"`switchport port-security maximum <数>`。インターフェイスコンフィギュレーションモードで実行する。","comment":"Port Security/maximum/コマンド","sourceIndex":93},{"id":"c38ed4a5dc32e102","front":"【Port Security】スティッキーラーニングを有効化するコマンドは？","back":"`switchport port-security mac-address sticky`。学習したMACアドレスをrunning-configに反映できる。","comment":"Port Security/sticky/コマンド","sourceIndex":94},{"id":"f30dfb280d063cfe","front":"【Port Security】ポートセキュリティ違反時の代表的な3モードは？","back":"protect、restrict、shutdown。shutdownはデフォルトで、違反時にerr-disabledになる。","comment":"Port Security/violation","sourceIndex":95},{"id":"b9382c7c83b386da","front":"【Port Security】違反モードshutdownでは違反時に何が起きるか？","back":"ポートがerr-disabledになり、通信できなくなる。復旧には手動でshutdown/no shutdown、またはerrdisable recovery設定が必要。","comment":"Port Security/shutdown","sourceIndex":96},{"id":"2e87ba8092775a0f","front":"【IPv6】IPv6にはブロードキャストがあるか？","back":"ない。IPv6ではブロードキャストの代わりにマルチキャストを活用する。","comment":"IPv6/基礎","sourceIndex":97},{"id":"178b457e24a14aff","front":"【IPv6】IPv6でIPv4のARPに相当する役割を担う仕組みは？","back":"NDP（Neighbor Discovery Protocol）。ICMPv6を利用し、MACアドレス解決や近隣探索を行う。","comment":"IPv6/NDP","sourceIndex":98},{"id":"48096bff2b61dfa1","front":"【IPv6】要請ノードマルチキャストアドレスは主に何に使われるか？","back":"NDPのNeighbor Solicitationで、特定IPv6アドレスを持つ相手を効率よく探すために使う。IPv6版ARPの宛先イメージ。","comment":"IPv6/要請ノードマルチキャスト","sourceIndex":99},{"id":"cbb4dd9e7b6bafde","front":"【IPv6】要請ノードマルチキャストアドレスの形式は？","back":"`FF02::1:FFxx:xxxx`。対象IPv6アドレスの下位24ビットを使って生成される。","comment":"IPv6/要請ノードマルチキャスト/形式","sourceIndex":100},{"id":"c7d8e8958a7fce2f","front":"【IPv6】リンクローカルアドレスの代表的なプレフィックスは？","back":"`FE80::/10`。同一リンク内でのみ有効で、ルータを越えて転送されない。","comment":"IPv6/リンクローカル","sourceIndex":101},{"id":"87283793e474482c","front":"【IPv6】グローバルユニキャストアドレスの代表的な範囲は？","back":"`2000::/3`。インターネット上で一意に到達可能なIPv6アドレスの範囲。","comment":"IPv6/GUA","sourceIndex":102},{"id":"3f59cff6112a6b92","front":"【IPv6】IPv6のマルチキャストアドレスは何で始まるか？","back":"`FF00::/8`。例：全ノードマルチキャストは `FF02::1`、全ルータは `FF02::2`。","comment":"IPv6/マルチキャスト","sourceIndex":103},{"id":"b4d6b7ae173e4729","front":"【IPv6】IPv6のループバックアドレスは？","back":"`::1`。IPv4の127.0.0.1に相当する。","comment":"IPv6/特殊アドレス","sourceIndex":104},{"id":"e28339c59b121a02","front":"【IPv6】未指定アドレスは？","back":"`::`。アドレス未設定やデフォルトルート `::/0` などで見かける。","comment":"IPv6/特殊アドレス","sourceIndex":105},{"id":"e2c4bc4bfda25831","front":"【IPv6】DADとは何を確認する仕組みか？","back":"Duplicate Address Detection。同一リンク上でIPv6アドレスが重複していないか確認する仕組み。NDPを利用する。","comment":"IPv6/NDP/DAD","sourceIndex":106},{"id":"fa28e07c356826ef","front":"【DHCP】DHCPサーバから配布される代表的な情報を4つ挙げると？","back":"IPアドレス、サブネットマスク、デフォルトゲートウェイ、DNSサーバ、リース期間など。","comment":"DHCP/配布情報","sourceIndex":107},{"id":"2c9c3b55b7412742","front":"【DHCP】Cisco IOSでDHCP除外アドレスを設定するコマンドは？","back":"グローバルで `ip dhcp excluded-address <開始IP> <終了IP>`。プールで配布しない範囲を指定する。","comment":"DHCP/除外アドレス","sourceIndex":108},{"id":"68b1a059b74ed09b","front":"【DHCP】DHCPプール作成コマンドは？","back":"グローバルで `ip dhcp pool <プール名>`。その後、network、default-router、dns-serverなどを設定する。","comment":"DHCP/コマンド","sourceIndex":109},{"id":"d45304b8004d6ac3","front":"【NAT】内部ローカルアドレスとは？","back":"内部ネットワークで端末に実際に設定されているアドレス。例：社内PCのプライベートIP。","comment":"NAT/用語","sourceIndex":110},{"id":"f4719124159911c4","front":"【NAT】内部グローバルアドレスとは？","back":"内部端末が外部から見えるときの変換後アドレス。例：NAT後のグローバルIP。","comment":"NAT/用語","sourceIndex":111},{"id":"34e9728edce2a7e8","front":"【NAT】外部グローバルアドレスとは？","back":"外部ホストに実際に割り当てられているアドレス。例：インターネット上のWebサーバの本来のIP。","comment":"NAT/用語","sourceIndex":112},{"id":"dfcfa35ef43a9094","front":"【NAT】外部ローカルアドレスとは？","back":"内部ネットワークから見た外部ホストのアドレス。通常は外部グローバルと同じことが多いが、外部宛先も変換する設計では異なる。","comment":"NAT/用語","sourceIndex":113},{"id":"9a7b5e00d24a4a35","front":"【NAT】PATとは何か？","back":"複数の内部端末を1つまたは少数のグローバルIPで共有するNAT。ポート番号で通信を識別する。NATオーバーロードとも呼ぶ。","comment":"NAT/PAT","sourceIndex":114},{"id":"30e2f6f1678d9f2a","front":"【WAN】HDLCは主にOSI参照モデルの何層のプロトコルか？","back":"第2層、データリンク層。WANのシリアル回線などで使われるカプセル化方式。","comment":"WAN/HDLC","sourceIndex":115},{"id":"b66d4715a055e92e","front":"【WAN】PPPは主にOSI参照モデルの何層のプロトコルか？","back":"第2層、データリンク層。認証や複数プロトコル対応などの機能を持つWANプロトコル。","comment":"WAN/PPP","sourceIndex":116},{"id":"aa4b77fc7998708c","front":"【WAN】CHAPは何の認証方式か？","back":"PPPで使われる認証方式。PAPより安全で、チャレンジ/レスポンス方式を使う。","comment":"WAN/CHAP","sourceIndex":117},{"id":"977fa55e00b9ea23","front":"【WAN】PAPとCHAPの違いを簡単に説明すると？","back":"PAPはユーザー名/パスワードを平文に近い形で送る単純方式。CHAPはチャレンジ/レスポンスで認証し、PAPより安全。","comment":"WAN/PPP認証","sourceIndex":118},{"id":"9321fa7790174df7","front":"【WAN】MPLSは転送に何を使う技術か？","back":"ラベル。IPアドレスだけでなくラベルに基づいて高速・柔軟に転送する。","comment":"WAN/MPLS","sourceIndex":119},{"id":"bfc9e8a2806c332e","front":"【WAN】IP-VPNとは何か？","back":"通信事業者の閉域IP網を使って拠点間を接続するVPNサービス。インターネットVPNとは区別される。","comment":"WAN/IP-VPN","sourceIndex":120},{"id":"d1295144d708a7aa","front":"【WAN】専用線の特徴を2つ挙げると？","back":"拠点間を専用に接続する、帯域や品質が安定しやすい、セキュリティを確保しやすい、コストは高めになりやすい。","comment":"WAN/専用線","sourceIndex":121},{"id":"6180df8801792359","front":"【WAN】PPPカプセル化をインターフェイスに設定するコマンドは？","back":"インターフェイスで `encapsulation ppp`。シリアルインターフェイスなどで設定する。","comment":"WAN/PPP/コマンド","sourceIndex":122},{"id":"73ae0f3ca0943197","front":"【802.1X】IEEE 802.1Xの構成要素を3つ挙げると？","back":"サプリカント、オーセンティケータ、認証サーバ。例：PC、スイッチ/AP、RADIUSサーバ。","comment":"セキュリティ/802.1X","sourceIndex":123},{"id":"92a0fd531d8d5911","front":"【802.1X】802.1Xにおけるオーセンティケータの例は？","back":"スイッチや無線AP。サプリカントからの認証要求を認証サーバへ中継する役割。","comment":"セキュリティ/802.1X","sourceIndex":124},{"id":"8ce4662fe522fda1","front":"【Security】VACLとは何を制御するACLか？","back":"VLAN Access Control List。同一VLAN内を含むVLAN内トラフィックをフィルタできる。通常ACLが苦手な同一VLAN内通信の制御に使う。","comment":"セキュリティ/VACL","sourceIndex":125},{"id":"840d96e7a57c89cf","front":"【Wireless】IEEE 802.11はOSI参照モデルのどの層に関係する規格か？","back":"主に物理層とデータリンク層（MAC副層）。無線LANの規格。","comment":"無線LAN/802.11","sourceIndex":126},{"id":"a65fb5abd21b600d","front":"【Wireless】WLCとは何を管理する装置か？","back":"Wireless LAN Controller。複数のAPを集中管理し、SSID、認証、ローミング、無線設定などを制御する。","comment":"無線LAN/WLC","sourceIndex":127},{"id":"c5174e23af8a0337","front":"【Wireless】Split-MACアーキテクチャとは何か？","back":"APとWLCで無線LANの処理を分担する考え方。リアルタイム性の高い処理はAP、管理・制御系はWLCが担当する。","comment":"無線LAN/Split-MAC","sourceIndex":128},{"id":"f0ba2439d189b6cc","front":"【Wireless】CAPWAPは主に何のためのプロトコルか？","back":"APとWLC間の制御・データトンネルに使われるプロトコル。集中管理型無線LANで使われる。","comment":"無線LAN/CAPWAP","sourceIndex":129},{"id":"a926877bf0d9c175","front":"【Wireless】PSKとは何か？","back":"Pre-Shared Key。無線LAN接続時に共有する事前共有鍵。家庭/小規模環境のWPA2-Personalなどで使う。","comment":"無線LAN/セキュリティキー","sourceIndex":130},{"id":"8bba6229cf03f55a","front":"【NTP】NTPで時刻同期しているサーバ情報を確認するコマンドは？","back":"`show ntp associations`。同期先候補や選択状態を確認できる。","comment":"デバイス管理/NTP/確認コマンド","sourceIndex":131},{"id":"ead41d0db9c6fc3e","front":"【NTP】NTPの同期状態そのものを確認する代表コマンドは？","back":"`show ntp status`。同期しているか、基準、stratumなどを確認できる。","comment":"デバイス管理/NTP/確認コマンド","sourceIndex":132},{"id":"b70bec36098fa44f","front":"【LLDP】LLDPで隣接機器の詳細情報を確認するコマンドは？","back":"`show lldp neighbors detail`。隣接機器の管理IP、ポート、機種情報などを詳しく確認できる。","comment":"デバイス管理/LLDP/確認コマンド","sourceIndex":133},{"id":"0b361e36d5361e58","front":"【CDP】Cisco機器同士で隣接機器の詳細情報を確認するコマンドは？","back":"`show cdp neighbors detail`。Cisco独自のCDPで隣接機器情報を確認する。","comment":"デバイス管理/CDP/確認コマンド","sourceIndex":134},{"id":"b2aadbd5c687ab43","front":"【LLDP/CDP】LLDPとCDPの大きな違いは？","back":"LLDPは標準規格、CDPはCisco独自。マルチベンダー環境ではLLDPが使われやすい。","comment":"デバイス管理/LLDP-CDP","sourceIndex":135},{"id":"f89eb1b485cd8136","front":"【Syslog】Cisco IOSでログメッセージの重大度は数値が小さいほど重大？大きいほど重大？","back":"小さいほど重大。0 Emergencyが最重大、7 Debuggingが最も詳細。","comment":"デバイス管理/Syslog","sourceIndex":136},{"id":"d8a65f25df8a45d4","front":"【問題文対策】複数選択問題で最初に確認すべきことは？","back":"「いくつ選ぶか」。2つ選べ、3つ選べ、すべて選べ、の指定を先に確認する。","comment":"試験対策/読み落とし防止","sourceIndex":137},{"id":"a9f6da889799a3e5","front":"【問題文対策】選択肢を見る前に確認すべき文言は？","back":"「正しいもの」か「誤っているもの」か。ここを逆に読むと知識があっても失点する。","comment":"試験対策/読み落とし防止","sourceIndex":138},{"id":"03ebebb3ab212b6d","front":"【問題文対策】コマンド問題で必ず確認すべき観点は？","back":"どのモードで実行するか。global、interface、line、router、DHCP poolを切り分ける。","comment":"試験対策/コマンド","sourceIndex":139},{"id":"4ea74b869e6b6ce1","front":"【問題文対策】「設定コマンド」と「確認コマンド」を混同しないための考え方は？","back":"設定はconfig系モード、確認は多くが特権EXECのshow系。問題が“設定せよ”か“確認せよ”かを読む。","comment":"試験対策/コマンド","sourceIndex":140},{"id":"08ec2635f9ddebde","front":"【問題文対策】選択肢に明らかに正しいものがあるのに選び忘れるミスへの対策は？","back":"各選択肢に○△×を付けるつもりで読む。複数選択では“正しいものをすべて拾う”作業にする。","comment":"試験対策/複数選択","sourceIndex":141},{"id":"69b6ad0fcd10cd95","front":"【問題文対策】「IPアドレスを設定可能なインターフェイス」を問われたら、何を切り分ける？","back":"L2スイッチの物理ポート、SVI、L3スイッチのルーテッドポートを切り分ける。L3物理ポートは `no switchport` が必要。","comment":"試験対策/L3スイッチ","sourceIndex":142},{"id":"1955f0e48a99c39c","front":"【設定判断】次のコマンドはどのモード？\n`switchport port-security mac-address sticky`","back":"インターフェイスコンフィギュレーションモード。ポートセキュリティ関連は対象ポートで設定する。","comment":"Port Security/実行モード","sourceIndex":143},{"id":"50f1c27ec83bbfad","front":"【設定判断】次のコマンドはどのモード？\n`spanning-tree guard root`","back":"インターフェイスコンフィギュレーションモード。Root Guardは対象ポートに設定する。","comment":"STP/実行モード","sourceIndex":144},{"id":"23e98558ad2f86dc","front":"【設定判断】次のコマンドはどのモード？\n`ip ssh version 2`","back":"グローバルコンフィギュレーションモード。SSH全体のバージョン指定。","comment":"SSH/実行モード","sourceIndex":145},{"id":"46a4a8fb95967487","front":"【設定判断】次のコマンドはどのモード？\n`passive-interface g0/0`","back":"ルーティングプロトコルのコンフィギュレーションモード。例：`router ospf 1` の下で設定する。","comment":"ルーティング/実行モード","sourceIndex":146},{"id":"21e6fd50eaf6a737","front":"【設定判断】次のコマンドはどのモード？\n`ip access-group 101 in`","back":"インターフェイスコンフィギュレーションモード。インターフェイスを通過する通信にACLを適用する。","comment":"ACL/実行モード","sourceIndex":147},{"id":"f662394b9aa4a546","front":"【設定判断】次のコマンドはどのモード？\n`access-class 10 in`","back":"line vtyコンフィギュレーションモード。VTYへの管理アクセスをACLで制限する。","comment":"ACL/VTY/実行モード","sourceIndex":148},{"id":"9efa361f4492258e","front":"【設定判断】次のコマンドはどのモード？\n`standby 10 track g0/1 30`","back":"インターフェイスコンフィギュレーションモード。HSRPのtrack設定は対象インターフェイスで行う。","comment":"HSRP/実行モード","sourceIndex":149},{"id":"32cf80bc50749c0e","front":"【設定判断】次のコマンドはどのモード？\n`network 192.168.10.0 0.0.0.255 area 0`","back":"OSPFルータコンフィギュレーションモード。`router ospf <process-id>` の下で設定する。","comment":"OSPF/実行モード","sourceIndex":150},{"id":"acda4baa8ca4fb54","front":"【確認判断】HSRPのActive/Standbyを短く確認したい。どのコマンド？","back":"`show standby brief`。試験では“要約情報”という表現に注意。","comment":"HSRP/確認コマンド","sourceIndex":151},{"id":"d5f50c3230451abb","front":"【確認判断】OSPFネイバー関係を確認したい。どのコマンド？","back":"`show ip ospf neighbor`。隣接ルータのNeighbor ID、状態、Dead Timeなどを確認できる。","comment":"OSPF/確認コマンド","sourceIndex":152},{"id":"ecbca08ebb271003","front":"【確認判断】EIGRPのAS番号とK値を確認したい。どのコマンド？","back":"`show ip protocols`。EIGRPのAS番号、K値、AD、network文などを確認できる。","comment":"EIGRP/確認コマンド","sourceIndex":153},{"id":"3e808787c4b52bd9","front":"【確認判断】LLDPの隣接機器の詳細情報を見たい。どのコマンド？","back":"`show lldp neighbors detail`。`detail` オプションを忘れない。","comment":"LLDP/確認コマンド","sourceIndex":154},{"id":"be87734f6d6efdaf","front":"【確認判断】NTP同期先の一覧を見たい。どのコマンド？","back":"`show ntp associations`。同期状態そのものは `show ntp status` も使う。","comment":"NTP/確認コマンド","sourceIndex":155}]},{"id":"builtin_ccna_2nd_round_mistake_drill_1","name":"CCNA 2周目 ミス問題ドリル","description":"追加添付されたCSV（ccna_2nd_round_mistake_drill(1).csv）から作成した問題集。","createdAt":"2026-05-25","questionCount":181,"questions":[{"id":"45dcec7e19194e30","front":"【読解対策】問題文に「誤っているものを選べ」とある場合、最初に何を確認するべきか？","back":"正しい知識を探す前に、選ぶ対象が「誤り」なのか「正しいもの」なのかを確認する。選択肢を見る前に「誤りを選ぶ」と意識してから解く。","comment":"読解/誤選択/2周目ミス","sourceIndex":1},{"id":"9eeeb15f44ac6db3","front":"【読解対策】複数選択問題で最初に確認すべき2点は何か？","back":"①いくつ選ぶ問題か、②正しいものを選ぶのか誤っているものを選ぶのか。この2点を確認してから選択肢を見る。","comment":"読解/複数選択/重要","sourceIndex":2},{"id":"e031fd5a84f69aeb","front":"【読解対策】「選択肢の押し間違い」を防ぐため、解答確定前に確認することは？","back":"自分が選んだ選択肢が、頭の中で選んだ答えと一致しているか確認する。特に似た文言の選択肢が並ぶ問題では、最後に選択済みの番号を見直す。","comment":"読解/操作ミス","sourceIndex":3},{"id":"18f5e3e0a9369e99","front":"【読解対策】同じ問題で2回勘違いして間違える場合、復習時に何をメモするべきか？","back":"正解だけでなく、「自分がなぜその選択肢を正しいと思ったのか」をメモする。勘違いの理由を潰さないと、同じ形式で再発する。","comment":"読解/復習法","sourceIndex":4},{"id":"7f3134498c5f2723","front":"【読解対策】CCNAの問題で「できることをすべて選べ」と出た場合の注意点は？","back":"明らかに正しい選択肢を選び忘れないこと。消去法だけでなく、各選択肢を個別にTrue/False判定する。","comment":"読解/選択不十分","sourceIndex":5},{"id":"2527d7148709f3e5","front":"【読解対策】コマンド問題で最初に確認すべき観点は何か？","back":"何を設定するかだけでなく、「どのモードで実行するか」を確認する。global、interface、line、router、DHCP poolなどを切り分ける。","comment":"読解/実行モード","sourceIndex":6},{"id":"a7992ea492607596","front":"【ポート番号】HTTPの標準ポート番号は？","back":"TCP 80番。HTTPは暗号化なしのWeb通信で使われる。","comment":"HTTP/ポート番号/基礎","sourceIndex":7},{"id":"04eed8241da5cc2d","front":"【ポート番号】HTTPSの標準ポート番号は？","back":"TCP 443番。HTTPSはTLSで暗号化されたWeb通信で使われる。","comment":"HTTPS/ポート番号/基礎","sourceIndex":8},{"id":"7405d3699a17d595","front":"【ポート番号】HTTPとHTTPSのポート番号の組み合わせとして正しいものはどれか？\nA. HTTP 23 / HTTPS 22\nB. HTTP 53 / HTTPS 443\nC. HTTP 80 / HTTPS 443\nD. HTTP 110 / HTTPS 25","back":"C。HTTPはTCP 80、HTTPSはTCP 443。","comment":"HTTP/HTTPS/選択問題","sourceIndex":9},{"id":"a1d4ac89e48c045f","front":"【ポート番号】SSH、Telnet、HTTP、HTTPSの標準ポート番号を答えよ。","back":"SSHはTCP 22、TelnetはTCP 23、HTTPはTCP 80、HTTPSはTCP 443。","comment":"ポート番号/比較","sourceIndex":10},{"id":"f023d160a3ae88a3","front":"【ポート番号】DNS、DHCP、HTTP、NTPの代表的なポート番号を答えよ。","back":"DNSは53、DHCPはUDP 67/68、HTTPはTCP 80、NTPはUDP 123。","comment":"ポート番号/頻出","sourceIndex":11},{"id":"93e39325197a0e8d","front":"【MACアドレステーブル】スイッチのMACアドレステーブルを確認するコマンドは？","back":"`show mac address-table`。機種やIOSによっては古い形式で `show mac-address-table` と表示される場合もあるが、CCNAでは `show mac address-table` を基本にする。","comment":"Switch/MACアドレステーブル/確認","sourceIndex":12},{"id":"f62171888870aa3d","front":"【MACアドレステーブル】MACアドレステーブルに主に表示される情報は何か？","back":"VLAN番号、MACアドレス、学習タイプ、関連付けられたポート。どのMACアドレスがどのポートの先にいるかを確認できる。","comment":"Switch/MACアドレステーブル/表示内容","sourceIndex":13},{"id":"bff70905811b0048","front":"【MACアドレステーブル】`show mac address-table` の Type 欄に DYNAMIC と表示される意味は？","back":"スイッチが受信フレームの送信元MACアドレスから自動学習したエントリという意味。","comment":"Switch/MACアドレステーブル/DYNAMIC","sourceIndex":14},{"id":"2201b25744409c65","front":"【MACアドレステーブル】スイッチは何を見てMACアドレスを学習するか？","back":"受信したフレームの送信元MACアドレスと、そのフレームを受信したポートを対応付けて学習する。","comment":"Switch/MAC学習/基礎","sourceIndex":15},{"id":"824b0aa139f8ced1","front":"【MACアドレステーブル】宛先MACアドレスがMACアドレステーブルに存在しない場合、スイッチはどうするか？","back":"同一VLAN内の受信ポート以外へフラッディングする。未知のユニキャストはフラッディングされる。","comment":"Switch/フラッディング","sourceIndex":16},{"id":"92e437e1bad6084b","front":"【MACアドレステーブル】MACアドレステーブルのエントリはVLANごとに管理される。正しいか？","back":"正しい。表示にもVLAN番号が含まれ、同じMACアドレスでもVLANが異なれば別の文脈で扱われる。","comment":"Switch/VLAN/MACテーブル","sourceIndex":17},{"id":"385e437f19281e52","front":"【MACアドレステーブル】`show mac address-table` を見れば、IPアドレスとポートの対応を直接確認できる。正しいか？","back":"誤り。MACアドレステーブルはMACアドレスとポートの対応を確認する表。IPアドレスとの対応はARPテーブルなどを見る。","comment":"Switch/MACテーブル/ひっかけ","sourceIndex":18},{"id":"bd250e3497324f1c","front":"【MACアドレステーブル】MACアドレステーブルとARPテーブルの違いは？","back":"MACアドレステーブルはスイッチがMACアドレスとポートを対応付ける表。ARPテーブルはIPアドレスとMACアドレスを対応付ける表。","comment":"Switch/ARP/MACテーブル/比較","sourceIndex":19},{"id":"49384079ff4840cf","front":"【MACアドレステーブル】特定VLANのMACアドレステーブルだけ確認したい場合のコマンド例は？","back":"`show mac address-table vlan 10`。VLAN 10に関するMACアドレス学習状況を確認できる。","comment":"Switch/MACテーブル/VLAN","sourceIndex":20},{"id":"f7ec45118218b2a4","front":"【スタティックルート】スタティックルートを確認できる代表的なコマンドを3つ答えよ。","back":"`show ip route`、`show running-config`、`show running-config | include ip route`。ルーティングテーブルで有効な経路を見るなら `show ip route`、設定そのものを見るなら `show run`。","comment":"Static Route/確認コマンド/2周目ミス","sourceIndex":21},{"id":"71fdf38b9b5a67e9","front":"【スタティックルート】`show ip route` と `show running-config` の確認対象の違いは？","back":"`show ip route` は実際にルーティングテーブルへ載っている経路を確認する。`show running-config` は設定として投入されている `ip route` を確認する。","comment":"Static Route/show ip route/show run","sourceIndex":22},{"id":"f0eaf68e0a059fca","front":"【スタティックルート】`show run` でもスタティックルートの確認ができる。正しいか？","back":"正しい。`ip route ...` という設定行を確認できる。ただし、その経路が実際にルーティングテーブルへ載っているかは `show ip route` で確認する。","comment":"Static Route/show run/ひっかけ","sourceIndex":23},{"id":"623126be667b4dc3","front":"【スタティックルート】スタティックルートを設定する基本コマンドは？","back":"`ip route 宛先ネットワーク サブネットマスク ネクストホップIPまたは出力インターフェイス`。グローバルコンフィギュレーションモードで設定する。","comment":"Static Route/設定/実行モード","sourceIndex":24},{"id":"3a86e89006cf09b5","front":"【スタティックルート】次の設定はどのモードで実行するか？\n`ip route 192.168.2.0 255.255.255.0 10.0.0.2`","back":"グローバルコンフィギュレーションモード。インターフェイスモードではない。","comment":"Static Route/実行モード","sourceIndex":25},{"id":"30ab3cd1c35a87c9","front":"【スタティックルート】`show ip route static` は何を確認するコマンドか？","back":"ルーティングテーブル上のスタティックルートだけを表示するコマンド。","comment":"Static Route/確認","sourceIndex":26},{"id":"c63b87cface67365","front":"【スタティックルート】ルーティングテーブルに S と表示される経路は何か？","back":"スタティックルート。`S*` は候補デフォルトルートを表すことがある。","comment":"Static Route/コード","sourceIndex":27},{"id":"1ee1c70cba5054c4","front":"【OSPF】OSPFのコストを直接変更するインターフェイスコマンドは？","back":"`ip ospf cost <値>`。インターフェイスコンフィギュレーションモードで設定する。","comment":"OSPF/コスト/直接変更","sourceIndex":28},{"id":"ee43c36248df7d2a","front":"【OSPF】OSPFのコストは `bandwidth` コマンドでも影響を受ける。正しいか？","back":"正しい。OSPFのコストはインターフェイスの帯域幅を基に計算されるため、`bandwidth` を変更すると計算されるコストに影響する。ただし実速度そのものを変えるコマンドではない。","comment":"OSPF/bandwidth/2周目ミス","sourceIndex":29},{"id":"850dd43137891f63","front":"【OSPF】`bandwidth 10000` はインターフェイスの物理速度を10Mbpsに変えるコマンドである。正しいか？","back":"誤り。`bandwidth` はルーティングプロトコルの計算などに使われる論理的な帯域幅の値であり、物理速度を変更するものではない。","comment":"OSPF/bandwidth/ひっかけ","sourceIndex":30},{"id":"87b5daa145a71e32","front":"【OSPF】OSPFコストの計算式の基本は？","back":"基準帯域幅 ÷ インターフェイス帯域幅。デフォルト基準帯域幅は一般に100Mbpsとして扱われるため、高速リンクでは調整が必要になることがある。","comment":"OSPF/コスト計算","sourceIndex":31},{"id":"7080b9da2978814b","front":"【OSPF】OSPFの基準帯域幅を変更するコマンドは？","back":"`auto-cost reference-bandwidth <Mbps>`。OSPFルータコンフィギュレーションモードで設定する。","comment":"OSPF/reference-bandwidth/コマンド","sourceIndex":32},{"id":"178c4e19416b8f68","front":"【OSPF】`ip ospf cost` はどのモードで設定するか？","back":"インターフェイスコンフィギュレーションモード。特定インターフェイスのOSPFコストを直接指定する。","comment":"OSPF/実行モード","sourceIndex":33},{"id":"adaff9cba76f8d3c","front":"【OSPF】`auto-cost reference-bandwidth` はどのモードで設定するか？","back":"OSPFルータコンフィギュレーションモード。例：`router ospf 1` の配下で設定する。","comment":"OSPF/実行モード","sourceIndex":34},{"id":"79a839f11c4cbe3c","front":"【OSPF】OSPFのインターフェイスごとの情報を確認する代表的なコマンドは？","back":"`show ip ospf interface`。Hello/Dead interval、コスト、ネットワークタイプなどを確認できる。","comment":"OSPF/確認コマンド","sourceIndex":35},{"id":"524481b64d438d6f","front":"【OSPF】OSPFのネイバー関係を確認するコマンドは？","back":"`show ip ospf neighbor`。隣接ルータの状態、Neighbor ID、Dead Timeなどを確認する。","comment":"OSPF/確認コマンド","sourceIndex":36},{"id":"be4a157673a521e6","front":"【OSPF】OSPFのDead intervalを変更するコマンドは？","back":"`ip ospf dead-interval <秒>`。インターフェイスコンフィギュレーションモードで設定する。","comment":"OSPF/Dead interval/復習","sourceIndex":37},{"id":"50bee5eebdf6defd","front":"【ワイルドカードマスク】ワイルドカードマスクとは何か？","back":"比較するビットと無視するビットを指定するマスク。0は一致を要求、1は無視を意味する。","comment":"ACL/ワイルドカードマスク/基礎","sourceIndex":38},{"id":"5d1ff9d6fafc72bc","front":"【ワイルドカードマスク】サブネットマスク 255.255.255.0 に対応するワイルドカードマスクは？","back":"0.0.0.255。サブネットマスクを反転した値になる。","comment":"ACL/ワイルドカードマスク","sourceIndex":39},{"id":"2839623242868a07","front":"【ワイルドカードマスク】サブネットマスク 255.255.255.252 に対応するワイルドカードマスクは？","back":"0.0.0.3。/30のサブネットマスクを反転した値。","comment":"ACL/ワイルドカードマスク","sourceIndex":40},{"id":"138bed79ddc3edc4","front":"【ワイルドカードマスク】`0.0.0.0` は何を意味するか？","back":"すべてのビットが一致する必要がある。つまり特定の1ホストを指定する意味になる。","comment":"ACL/ワイルドカードマスク/host","sourceIndex":41},{"id":"4a506c3788ad242c","front":"【ワイルドカードマスク】ACLで特定ホスト 192.168.1.10 を指定する書き方を2つ答えよ。","back":"`host 192.168.1.10` または `192.168.1.10 0.0.0.0`。","comment":"ACL/host","sourceIndex":42},{"id":"db212d30ea493158","front":"【ワイルドカードマスク】ACLで「任意の宛先」を表す書き方を2つ答えよ。","back":"`any` または `0.0.0.0 255.255.255.255`。","comment":"ACL/any","sourceIndex":43},{"id":"9e130bea3e212aa1","front":"【ワイルドカードマスク】ワイルドカードマスクで 0 のビットは「無視する」という意味である。正しいか？","back":"誤り。0は一致を要求、1は無視を意味する。サブネットマスクと意味が逆になりやすいので注意。","comment":"ACL/ワイルドカードマスク/ひっかけ","sourceIndex":44},{"id":"dbb8ea6632431bac","front":"【ACL】番号付き標準ACLの基本設定例は？","back":"`access-list 10 permit 192.168.1.0 0.0.0.255`。番号付きACLでは先頭に `ip access-list` は付けない。","comment":"ACL/番号付き/2周目ミス","sourceIndex":45},{"id":"f96c6acad961fc58","front":"【ACL】名前付き標準ACLを作成する基本コマンドは？","back":"`ip access-list standard ACL名`。名前付きACLでは `ip access-list` からACL設定モードに入る。","comment":"ACL/名前付き/2周目ミス","sourceIndex":46},{"id":"6348f55cba6ac2ad","front":"【ACL】名前付き拡張ACLを作成する基本コマンドは？","back":"`ip access-list extended ACL名`。この後、ACL設定モードで permit / deny 条件を記述する。","comment":"ACL/名前付き/拡張","sourceIndex":47},{"id":"f756162ae3ea8526","front":"【ACL】番号付きACLと名前付きACLの作成コマンドの違いは？","back":"番号付きACLは `access-list 番号 ...`。名前付きACLは `ip access-list standard|extended 名前` から設定モードに入る。","comment":"ACL/番号付き/名前付き","sourceIndex":48},{"id":"e518d8813c2d24a4","front":"【ACL】標準ACLは主に何を条件にフィルタリングするか？","back":"送信元IPアドレス。標準ACLは宛先IPやポート番号までは基本的に見ない。","comment":"ACL/標準ACL","sourceIndex":49},{"id":"91c7cec49d237540","front":"【ACL】拡張ACLは何を条件にフィルタリングできるか？","back":"送信元IP、宛先IP、プロトコル、TCP/UDPポート番号などを条件にできる。","comment":"ACL/拡張ACL","sourceIndex":50},{"id":"08896e23b9359c75","front":"【ACL】ACLには暗黙のdenyがある。正しいか？","back":"正しい。明示的に許可されなかった通信は最後の暗黙の `deny any` により拒否される。","comment":"ACL/暗黙のdeny","sourceIndex":51},{"id":"42219a13a4e7a135","front":"【ACL】VTYアクセス制御にACLを適用するコマンドは？","back":"`access-class <ACL番号または名前> in`。line vty設定モードで使う。インターフェイスの `ip access-group` と混同しない。","comment":"ACL/VTY/access-class/復習","sourceIndex":52},{"id":"4dc244b407207c86","front":"【ACL】インターフェイスにACLを適用するコマンドは？","back":"`ip access-group <ACL番号または名前> in|out`。インターフェイスコンフィギュレーションモードで使う。","comment":"ACL/ip access-group","sourceIndex":53},{"id":"e3979c26094b85cf","front":"【ACL】ACLのワイルドカードマスク `0.0.0.255` は何台分の範囲を表すか？","back":"最後の8ビットを無視するため、同一/24内の256アドレス分を表す。例：192.168.1.0 0.0.0.255。","comment":"ACL/ワイルドカードマスク/範囲","sourceIndex":54},{"id":"507b2e62c19d002c","front":"【VLAN】トランクポートの状態を確認する代表的なコマンドは？","back":"`show interfaces trunk`。どのポートがtrunkか、許可VLAN、native VLANなどを確認できる。","comment":"VLAN/Trunk/確認","sourceIndex":55},{"id":"94d2cb14c79384bb","front":"【DTP】DTPとは何のためのプロトコルか？","back":"スイッチ間リンクでトランク形成をネゴシエーションするCisco独自プロトコル。Dynamic Trunking Protocolの略。","comment":"DTP/基礎/2周目ミス","sourceIndex":56},{"id":"3e7c1e7debdf5013","front":"【DTP】DTPの状態や動作を確認する代表的なコマンドは？","back":"`show dtp interface`。DTPのネゴシエーション状態を確認できる。","comment":"DTP/確認コマンド","sourceIndex":57},{"id":"62902ebd6d8f10c2","front":"【DTP】インターフェイスのスイッチポートモードを確認する代表的なコマンドは？","back":"`show interfaces switchport`。Administrative Mode、Operational Mode、Access VLAN、Trunking Native Modeなどを確認できる。","comment":"VLAN/DTP/確認","sourceIndex":58},{"id":"d7be333a95f96970","front":"【DTP】`switchport mode access` の意味は？","back":"ポートをアクセスポートとして固定する。通常、PCやプリンタなどのエンド端末接続に使う。","comment":"DTP/switchport mode","sourceIndex":59},{"id":"e7b6c982746df0a6","front":"【DTP】`switchport mode trunk` の意味は？","back":"ポートをトランクポートとして固定する。複数VLANの通信を1本のリンクで運ぶ。","comment":"DTP/switchport mode","sourceIndex":60},{"id":"fcb183c92e6ccfc0","front":"【DTP】`switchport mode dynamic desirable` の意味は？","back":"自分から積極的にトランク形成を提案するDTPモード。相手がtrunk、dynamic desirable、dynamic autoならトランクになり得る。","comment":"DTP/dynamic desirable","sourceIndex":61},{"id":"0a2c5ef3c4c1af2a","front":"【DTP】`switchport mode dynamic auto` の意味は？","back":"相手からDTPでトランク形成を提案された場合に応じるモード。自分から積極的には提案しない。","comment":"DTP/dynamic auto","sourceIndex":62},{"id":"23340bba81078d83","front":"【DTP】両端が `dynamic auto` の場合、トランクは形成されるか？","back":"形成されない。両方とも受け身なので、どちらからも積極的にトランク形成を提案しない。","comment":"DTP/組み合わせ/頻出","sourceIndex":63},{"id":"9e4a02a798009e01","front":"【DTP】片側が `dynamic desirable`、もう片側が `dynamic auto` の場合、トランクは形成されるか？","back":"形成される。desirable側が積極的に提案し、auto側が応じる。","comment":"DTP/組み合わせ","sourceIndex":64},{"id":"8eb0014f4da9426d","front":"【DTP】片側が `trunk`、もう片側が `dynamic auto` の場合、トランクは形成されるか？","back":"通常は形成される。trunk側がトランクとして動作し、DTPによりauto側が応じる。","comment":"DTP/組み合わせ","sourceIndex":65},{"id":"eaa672f1c76f1cec","front":"【DTP】`switchport nonegotiate` の意味は？","back":"DTPフレームを送信しないようにする。トランクを手動固定したい場合などに使う。","comment":"DTP/nonegotiate","sourceIndex":66},{"id":"0b877206a07ad6b4","front":"【DTP】`switchport nonegotiate` を使う場合、通常どの設定と組み合わせるか？","back":"`switchport mode trunk` など、手動でモードを固定する設定と組み合わせる。DTPに頼らずトランクを構成する。","comment":"DTP/nonegotiate","sourceIndex":67},{"id":"be4eae4634ee258f","front":"【VLAN】VTPとDTPの違いは？","back":"VTPはVLAN情報をスイッチ間で同期・管理するプロトコル。DTPはリンクをトランクにするかどうかをネゴシエーションするプロトコル。","comment":"VLAN/VTP/DTP/比較","sourceIndex":68},{"id":"41cb947b9412a2bc","front":"【VLAN】VTPの状態を確認する代表的なコマンドは？","back":"`show vtp status`。VTPモード、ドメイン名、リビジョン番号などを確認できる。","comment":"VTP/確認","sourceIndex":69},{"id":"bb25e52d86ed56e6","front":"【VLAN】トランクで運ばれるVLANを制限するコマンドは？","back":"`switchport trunk allowed vlan <VLAN番号>`。インターフェイスコンフィギュレーションモードで設定する。","comment":"VLAN/Trunk/allowed vlan","sourceIndex":70},{"id":"6f353c6370e6d6df","front":"【VLAN】Native VLANを変更するコマンドは？","back":"`switchport trunk native vlan <VLAN番号>`。トランクポート上でタグなしフレームを扱うVLANを指定する。","comment":"VLAN/Native VLAN","sourceIndex":71},{"id":"e6d6521c2449eaa4","front":"【NAT】Cisco IOSでLAN側インターフェイスに設定するNAT方向コマンドは？","back":"`ip nat inside`。内部ネットワーク側のインターフェイスに設定する。","comment":"NAT/inside/2周目ミス","sourceIndex":72},{"id":"d3b6386ee83b3684","front":"【NAT】Cisco IOSでインターネット側インターフェイスに設定するNAT方向コマンドは？","back":"`ip nat outside`。外部ネットワーク側のインターフェイスに設定する。","comment":"NAT/outside/2周目ミス","sourceIndex":73},{"id":"4d157aebaebcef9f","front":"【NAT】`ip nat inside source ...` の意味を簡単に説明せよ。","back":"内部送信元アドレスを変換するNAT設定。一般的な内側LANから外部インターネット向けのNAT/PATで使う。","comment":"NAT/inside source","sourceIndex":74},{"id":"d0f8eb71252faa11","front":"【NAT】inside local addressとは何か？","back":"内部端末が内部ネットワークで実際に使っているアドレス。多くの場合、プライベートIPアドレス。","comment":"NAT/用語","sourceIndex":75},{"id":"cb8c72a4e29b994b","front":"【NAT】inside global addressとは何か？","back":"内部端末が外部ネットワークから見えるときの変換後アドレス。多くの場合、グローバルIPアドレス。","comment":"NAT/用語","sourceIndex":76},{"id":"aaa785c40f092165","front":"【NAT】outside global addressとは何か？","back":"外部ホストが外部ネットワークで実際に使っているアドレス。通常、インターネット上の相手サーバのグローバルIP。","comment":"NAT/用語","sourceIndex":77},{"id":"ee93d18a588d7342","front":"【NAT】outside local addressとは何か？","back":"外部ホストを内部ネットワークから見たときのアドレス。通常のCCNA問題ではoutside globalと同じになることも多い。","comment":"NAT/用語","sourceIndex":78},{"id":"0539802a183a9396","front":"【NAT】PATとは何か？","back":"複数の内部端末を、1つまたは少数のグローバルIPアドレスにポート番号で区別して変換する方式。NATオーバーロードとも呼ばれる。","comment":"NAT/PAT","sourceIndex":79},{"id":"5ce18c2d5f8a8e42","front":"【NAT】PATを設定するときによく使うキーワードは？","back":"`overload`。例：`ip nat inside source list 1 interface g0/0 overload`。","comment":"NAT/PAT/コマンド","sourceIndex":80},{"id":"4deecd29c84de49b","front":"【NAT】NAT変換テーブルを確認するコマンドは？","back":"`show ip nat translations`。変換前後のアドレスやポートを確認できる。","comment":"NAT/確認コマンド","sourceIndex":81},{"id":"7936061ad0f734e4","front":"【NAT】NATの統計情報を確認するコマンドは？","back":"`show ip nat statistics`。NATのヒット数、ミス数、inside/outsideインターフェイスなどを確認できる。","comment":"NAT/確認コマンド","sourceIndex":82},{"id":"cc70768f7ed7c3de","front":"【NAT】静的NATの基本設定例は？","back":"`ip nat inside source static 192.168.1.10 203.0.113.10`。内部ローカルアドレスを固定の内部グローバルアドレスへ変換する。","comment":"NAT/Static NAT","sourceIndex":83},{"id":"16ffbfad82be6ce2","front":"【NAT】動的NATとPATの違いは？","back":"動的NATはアドレスプールから1対1で変換する。PATはポート番号を使い、複数端末で1つのグローバルIPを共有できる。","comment":"NAT/比較","sourceIndex":84},{"id":"d29cebb6f0792f31","front":"【NAT】`ip nat inside` と `ip nat outside` はどのモードで設定するか？","back":"インターフェイスコンフィギュレーションモード。LAN側にinside、WAN/インターネット側にoutsideを設定する。","comment":"NAT/実行モード","sourceIndex":85},{"id":"d29fe4b6be0f1ab7","front":"【NAT】ACLを使ったPAT設定でACLは何を指定するために使うか？","back":"NAT変換対象となる内部送信元アドレス範囲を指定するために使う。","comment":"NAT/ACL/PAT","sourceIndex":86},{"id":"72745cbdcaaaba13","front":"【IPv6】IPv6ヘッダの基本サイズは？","back":"固定長40バイト。IPv4ヘッダは可変長だが、IPv6基本ヘッダは固定長。","comment":"IPv6/ヘッダ/2周目ミス","sourceIndex":87},{"id":"e06f47136dcbc46a","front":"【IPv6】IPv6ヘッダはIPv4ヘッダと比べてどう簡素化されているか？","back":"基本ヘッダが固定長になり、ヘッダチェックサムやフラグメンテーション関連の一部処理が基本ヘッダから外されている。拡張機能は拡張ヘッダで扱う。","comment":"IPv6/ヘッダ比較","sourceIndex":88},{"id":"cff5915f4317158b","front":"【IPv6】IPv6基本ヘッダにヘッダチェックサムはあるか？","back":"ない。IPv6ではルータの転送処理を軽くするため、IPv4にあったヘッダチェックサムは廃止されている。","comment":"IPv6/ヘッダ","sourceIndex":89},{"id":"2d07072e27a9d288","front":"【IPv6】IPv6ではルータが途中でパケットをフラグメントする。正しいか？","back":"誤り。IPv6では途中のルータはフラグメントしない。送信元がPath MTU Discoveryなどを使って適切に処理する。","comment":"IPv6/フラグメント","sourceIndex":90},{"id":"398ec31308257648","front":"【IPv6】IPv6のTTLに相当するフィールド名は？","back":"Hop Limit。ルータを1台通過するごとに減少し、0になると破棄される。","comment":"IPv6/Hop Limit","sourceIndex":91},{"id":"ab3b4f5db9d6d229","front":"【IPv6】IPv6のNext Headerフィールドは何を示すか？","back":"次に続くヘッダの種類を示す。TCP/UDPなどの上位プロトコルやIPv6拡張ヘッダを示す。","comment":"IPv6/Next Header","sourceIndex":92},{"id":"fbb481dc2b27688b","front":"【IPv6】IPv6にはブロードキャストが存在する。正しいか？","back":"誤り。IPv6にはブロードキャストはなく、マルチキャストやエニーキャストを使う。","comment":"IPv6/ブロードキャスト","sourceIndex":93},{"id":"ce7ee5ab3390bf73","front":"【IPv6】IPv6でARPの代わりに使われる仕組みは？","back":"NDP、Neighbor Discovery Protocol。ICMPv6を使って近隣探索やアドレス解決を行う。","comment":"IPv6/NDP/復習","sourceIndex":94},{"id":"abd1d593fbafe025","front":"【IPv6】要請ノードマルチキャストアドレスは何のために使われるか？","back":"IPv6で特定ノードのMACアドレスを解決するNeighbor Solicitationなどに使われる。IPv4のARPブロードキャストに近い役割を、マルチキャストで効率化している。","comment":"IPv6/要請ノード/復習","sourceIndex":95},{"id":"7e3a289476504740","front":"【IPv6】IPv6基本ヘッダはIPv4よりフィールド数が減り、転送処理が単純化されている。正しいか？","back":"正しい。アドレス長は大きくなったが、基本ヘッダは固定長で、処理しやすい構造になっている。","comment":"IPv6/ヘッダ比較","sourceIndex":96},{"id":"1c7a460e7eb06887","front":"【802.1X】IEEE 802.1Xの主な目的は？","back":"ポートベースのネットワークアクセス制御。認証に成功した端末だけネットワーク利用を許可する。","comment":"802.1X/基礎/2周目ミス","sourceIndex":97},{"id":"43dc694c9c9d31f2","front":"【802.1X】802.1Xの3つの構成要素は？","back":"サプリカント、オーセンティケータ、認証サーバ。","comment":"802.1X/構成要素","sourceIndex":98},{"id":"b59b4bfaabf677a2","front":"【802.1X】サプリカントとは何か？","back":"認証を受けるクライアント端末やその認証ソフトウェア。例：PC、スマートフォンなど。","comment":"802.1X/サプリカント","sourceIndex":99},{"id":"bb85bdcb303a6bfb","front":"【802.1X】オーセンティケータとは何か？","back":"端末と認証サーバの間に立ち、認証前の通信を制御する機器。例：スイッチや無線AP。","comment":"802.1X/オーセンティケータ","sourceIndex":100},{"id":"3a0ed4c1f625bbc7","front":"【802.1X】認証サーバとしてよく使われるプロトコルは？","back":"RADIUS。802.1X環境では認証サーバとしてRADIUSサーバがよく使われる。","comment":"802.1X/RADIUS","sourceIndex":101},{"id":"8664de23a2ff46d0","front":"【802.1X】TACACS+は802.1Xの代表的な構成要素に含まれるか？","back":"含まれない。802.1Xの構成要素はサプリカント、オーセンティケータ、認証サーバ。認証サーバ連携では通常RADIUSが使われる。","comment":"802.1X/TACACS/2周目ミス","sourceIndex":102},{"id":"0a3ad0b12c290477","front":"【802.1X】EAPとは何か？","back":"Extensible Authentication Protocol。802.1Xで認証情報をやり取りするために使われる認証フレームワーク。","comment":"802.1X/EAP/2周目ミス","sourceIndex":103},{"id":"adb8f09a2f64d098","front":"【802.1X】802.1Xで、認証前のクライアントは通常どのような状態か？","back":"ネットワーク利用が制限された未認証状態。認証に成功すると通常通信が許可される。","comment":"802.1X/動作","sourceIndex":104},{"id":"f06db8758b8262ae","front":"【802.11】IEEE 802.11は何の規格か？","back":"無線LANの規格。主に物理層とデータリンク層のMAC副層に関係する。","comment":"802.11/基礎/2周目ミス","sourceIndex":105},{"id":"34dd9296ec044bfd","front":"【802.11】IEEE 802.11はOSI参照モデルのどの層に関係するか？","back":"主に第1層の物理層と第2層のデータリンク層。問題の選択肢によっては無線LANの物理層規格として問われることもある。","comment":"802.11/OSI階層","sourceIndex":106},{"id":"8e85d1df3acadd91","front":"【802.11】802.11、802.1Q、802.1Xの違いを簡単に説明せよ。","back":"802.11は無線LAN、802.1QはVLANタグ付け、802.1Xはポートベース認証。","comment":"IEEE規格/比較","sourceIndex":107},{"id":"77d4b8be071bb8ce","front":"【802.1X】802.1XでスイッチやAPが担う役割は？","back":"オーセンティケータ。クライアントの認証要求を認証サーバへ中継し、認証結果に応じて通信を許可・制限する。","comment":"802.1X/役割","sourceIndex":108},{"id":"e9906e8e47184d68","front":"【802.1X】802.1Xでクライアント端末が担う役割は？","back":"サプリカント。認証を受ける側の端末。","comment":"802.1X/役割","sourceIndex":109},{"id":"cab5f175e47aad0a","front":"【802.1X】802.1XでRADIUSサーバが担う役割は？","back":"認証サーバ。資格情報を検証し、認証結果をオーセンティケータへ返す。","comment":"802.1X/役割","sourceIndex":110},{"id":"13015b856b4542d1","front":"【DHCP】DHCPサーバでデフォルトゲートウェイを配布するコマンドは？","back":"`default-router <IPアドレス>`。DHCP pool設定モードで実行する。","comment":"DHCP/復習","sourceIndex":111},{"id":"a250b68f91b8b73f","front":"【DHCP】DHCPで配布できる代表的な情報を答えよ。","back":"IPアドレス、サブネットマスク、デフォルトゲートウェイ、DNSサーバ、リース期間など。","comment":"DHCP/配布情報","sourceIndex":112},{"id":"812cc3ae4ccdec2c","front":"【DHCP】DHCPサーバでDNSサーバを指定するコマンドは？","back":"`dns-server <IPアドレス>`。DHCP pool設定モードで実行する。","comment":"DHCP/コマンド","sourceIndex":113},{"id":"1c097e8c0ecde778","front":"【DHCP】DHCPで除外アドレスを設定するコマンドは？","back":"`ip dhcp excluded-address <開始IP> <終了IP>`。グローバルコンフィギュレーションモードで実行する。","comment":"DHCP/除外アドレス/実行モード","sourceIndex":114},{"id":"08b8a0c69c05fe06","front":"【インターネット接続】LAN内のプライベートIP端末がインターネットへ出るとき、一般的に必要になる技術は？","back":"NATまたはPAT。プライベートIPをグローバルIPへ変換する必要がある。","comment":"Internet/NAT","sourceIndex":115},{"id":"8554e428eede159d","front":"【インターネット接続】デフォルトルートの設定例は？","back":"`ip route 0.0.0.0 0.0.0.0 <ネクストホップ>`。宛先がルーティングテーブルにない通信を上流へ送る。","comment":"Internet/Default Route","sourceIndex":116},{"id":"3c40d4b5422a23b3","front":"【インターネット接続】デフォルトルートはルーティングテーブル上でどのように見えることがあるか？","back":"`S* 0.0.0.0/0` のように表示される。`*` は候補デフォルトルートを示すことがある。","comment":"Internet/Default Route/確認","sourceIndex":117},{"id":"ad6e925e926051d2","front":"【インターネット接続】PATで外部インターフェイスのIPアドレスを使う設定例は？","back":"`ip nat inside source list 1 interface g0/0 overload`。ACL 1に一致する内部アドレスを、G0/0のIPでPATする。","comment":"NAT/PAT/コマンド","sourceIndex":118},{"id":"3dfa36bee80af2b8","front":"【インターネット接続】NAT設定後に疎通できない場合、最低限確認する3点は？","back":"①inside/outsideの向き、②NAT対象ACL、③デフォルトルートまたは戻り経路。","comment":"NAT/トラブルシュート","sourceIndex":119},{"id":"8e49671604f685c3","front":"【インターネット接続】NAT変換が発生しているか確認するには、どのコマンドを見るか？","back":"`show ip nat translations`。通信を発生させた後に確認すると変換エントリを見やすい。","comment":"NAT/確認","sourceIndex":120},{"id":"afdcb7a9099f0d85","front":"【実行モード】`ip nat inside` はどのモードで実行するか？","back":"インターフェイスコンフィギュレーションモード。NATの内側にしたいインターフェイス配下で設定する。","comment":"実行モード/NAT","sourceIndex":121},{"id":"6730dee08a9006c7","front":"【実行モード】`ip nat inside source list 1 interface g0/0 overload` はどのモードで実行するか？","back":"グローバルコンフィギュレーションモード。NAT変換ルールを定義するコマンド。","comment":"実行モード/NAT","sourceIndex":122},{"id":"644bd4476cbff507","front":"【実行モード】`switchport mode dynamic desirable` はどのモードで実行するか？","back":"インターフェイスコンフィギュレーションモード。対象ポートのDTP/スイッチポート動作を設定する。","comment":"実行モード/DTP","sourceIndex":123},{"id":"de6ba7492c46efac","front":"【実行モード】`show interfaces trunk` はどのモードで実行できる確認コマンドか？","back":"特権EXECモード。必要に応じて `enable` で特権EXECへ入ってから実行する。","comment":"実行モード/確認コマンド","sourceIndex":124},{"id":"1a65a9bcb63432e3","front":"【実行モード】`access-list 10 permit ...` はどのモードで実行するか？","back":"グローバルコンフィギュレーションモード。番号付きACLを作成するコマンド。","comment":"実行モード/ACL","sourceIndex":125},{"id":"34e773a476eba0d1","front":"【実行モード】`ip access-list extended WEB-FILTER` はどのモードで実行するか？","back":"グローバルコンフィギュレーションモードから名前付き拡張ACL設定モードへ入るコマンド。","comment":"実行モード/ACL","sourceIndex":126},{"id":"ecc03fdaac9cebc0","front":"【実行モード】`bandwidth 10000` はどのモードで実行するか？","back":"インターフェイスコンフィギュレーションモード。対象インターフェイスの論理帯域幅を設定する。","comment":"実行モード/bandwidth","sourceIndex":127},{"id":"34e2e81be89656dd","front":"【実行モード】`auto-cost reference-bandwidth 10000` はどのモードで実行するか？","back":"OSPFルータコンフィギュレーションモード。`router ospf <process-id>` の配下で実行する。","comment":"実行モード/OSPF","sourceIndex":128},{"id":"34d677e261fe4eef","front":"【実行モード】`default-router 192.168.1.1` はどのモードで実行するか？","back":"DHCP pool設定モード。DHCPクライアントへ配布するデフォルトゲートウェイを指定する。","comment":"実行モード/DHCP","sourceIndex":129},{"id":"27a83b88ca25b1e6","front":"【実行モード】`show mac address-table` は設定コマンドか確認コマンドか？","back":"確認コマンド。特権EXECモードでスイッチのMACアドレス学習状況を確認する。","comment":"実行モード/MACテーブル","sourceIndex":130},{"id":"0ac6cbb9ce16ad34","front":"【選択問題】次のうちHTTPのポート番号として正しいものはどれか？\nA. 22\nB. 23\nC. 80\nD. 443","back":"C。HTTPはTCP 80。443はHTTPS。","comment":"選択問題/HTTP","sourceIndex":131},{"id":"93706e66f1cb141b","front":"【選択問題】次のうちMACアドレステーブルで確認できるものを2つ選べ。\nA. VLAN番号\nB. 宛先IPアドレス\nC. MACアドレス\nD. OSPFコスト","back":"AとC。MACアドレステーブルではVLAN、MACアドレス、Type、Portなどを確認できる。","comment":"選択問題/MACテーブル/複数選択","sourceIndex":132},{"id":"865aa92d92f2e6fa","front":"【選択問題】スタティックルート設定を確認できるコマンドを2つ選べ。\nA. show ip route\nB. show running-config\nC. show cdp neighbors\nD. show vlan brief","back":"AとB。ルーティングテーブルは `show ip route`、設定行は `show running-config` で確認できる。","comment":"選択問題/Static Route/複数選択","sourceIndex":133},{"id":"b5debb9afec98a20","front":"【選択問題】OSPFのコストに影響する設定を2つ選べ。\nA. ip ospf cost\nB. bandwidth\nC. hostname\nD. line vty","back":"AとB。`ip ospf cost` は直接指定、`bandwidth` は計算されるコストに影響する。","comment":"選択問題/OSPF/複数選択","sourceIndex":134},{"id":"375404391d20990b","front":"【選択問題】名前付きACLを作成するコマンドとして正しいものはどれか？\nA. access-list WEB permit ip any any\nB. ip access-list extended WEB\nC. access-class WEB in\nD. ip access-group WEB in","back":"B。名前付きACLは `ip access-list standard|extended 名前` で作成する。","comment":"選択問題/ACL","sourceIndex":135},{"id":"df5103b8ac5069fb","front":"【選択問題】番号付き標準ACLの作成として正しいものはどれか？\nA. ip access-list 10 permit 192.168.1.0 0.0.0.255\nB. access-list 10 permit 192.168.1.0 0.0.0.255\nC. access-class 10 permit 192.168.1.0\nD. ip access-group 10 permit","back":"B。番号付きACLは `access-list 番号 条件` で作成する。","comment":"選択問題/ACL","sourceIndex":136},{"id":"f3a7d039e911a2c1","front":"【選択問題】DTPで両端がdynamic autoの場合、結果はどうなるか？\nA. 必ずtrunkになる\nB. trunkにならない\nC. 片方向だけtrunkになる\nD. VTP serverになる","back":"B。両方とも受け身なのでトランク形成を開始しない。","comment":"選択問題/DTP","sourceIndex":137},{"id":"b166a7fc86156933","front":"【選択問題】DTPでtrunkになり得る組み合わせを選べ。\nA. dynamic auto - dynamic auto\nB. dynamic desirable - dynamic auto\nC. access - dynamic desirable\nD. access - trunk","back":"B。desirableが積極的に提案し、autoが応じる。","comment":"選択問題/DTP","sourceIndex":138},{"id":"d7b86770ab323f1d","front":"【選択問題】NATのLAN側インターフェイスに設定するコマンドはどれか？\nA. ip nat outside\nB. ip nat inside\nC. nat enable\nD. ip inside nat","back":"B。LAN側、つまり内部ネットワーク側には `ip nat inside` を設定する。","comment":"選択問題/NAT","sourceIndex":139},{"id":"537f613373d3359e","front":"【選択問題】NATの変換テーブルを確認するコマンドはどれか？\nA. show ip nat translations\nB. show ip interface brief\nC. show access-lists\nD. show interfaces trunk","back":"A。NAT変換状況は `show ip nat translations` で確認する。","comment":"選択問題/NAT","sourceIndex":140},{"id":"8e2c712555bdab18","front":"【選択問題】IPv6基本ヘッダについて正しいものを2つ選べ。\nA. 固定長40バイト\nB. ヘッダチェックサムを持つ\nC. Hop Limitフィールドを持つ\nD. ルータが途中で自由にフラグメントする","back":"AとC。IPv6基本ヘッダは固定長40バイトで、TTLに相当するHop Limitを持つ。ヘッダチェックサムはない。","comment":"選択問題/IPv6/複数選択","sourceIndex":141},{"id":"16578e1819517cc0","front":"【選択問題】802.1Xの構成要素を3つ選べ。\nA. サプリカント\nB. オーセンティケータ\nC. 認証サーバ\nD. TACACS+\nE. DTP","back":"A、B、C。TACACS+やDTPは802.1Xの構成要素ではない。","comment":"選択問題/802.1X/複数選択","sourceIndex":142},{"id":"99b3187fbb566644","front":"【選択問題】EAPの説明として正しいものはどれか？\nA. VLANタグ付け方式\nB. 802.1Xで使われる認証フレームワーク\nC. トランク交渉プロトコル\nD. NAT変換方式","back":"B。EAPはExtensible Authentication Protocolで、802.1Xの認証で使われる。","comment":"選択問題/EAP","sourceIndex":143},{"id":"250ed59333683b7e","front":"【選択問題】IEEE 802.11の説明として最も適切なものはどれか？\nA. VLANタグ付けの規格\nB. 無線LANの規格\nC. ポートベース認証の規格\nD. ルーティングプロトコル","back":"B。IEEE 802.11は無線LANの規格。主に物理層とデータリンク層に関係する。","comment":"選択問題/802.11","sourceIndex":144},{"id":"1745fc3a36cb103e","front":"【選択問題】次のうち「誤っているもの」を選べ。\nA. HTTPはTCP 80を使う\nB. HTTPSはTCP 443を使う\nC. SSHはTCP 22を使う\nD. TelnetはTCP 80を使う","back":"D。TelnetはTCP 23。TCP 80はHTTP。問題文が「誤っているもの」なので注意。","comment":"選択問題/誤り選択/ポート","sourceIndex":145},{"id":"60518ad982586bf0","front":"【選択問題】次のうち「誤っているもの」を選べ。\nA. `ip nat inside` は内部側IFに設定する\nB. `ip nat outside` は外部側IFに設定する\nC. `show ip nat translations` でNAT変換を確認できる\nD. `show interfaces trunk` でNAT変換を確認できる","back":"D。`show interfaces trunk` はトランクポート確認用。NAT変換は `show ip nat translations`。","comment":"選択問題/誤り選択/NAT","sourceIndex":146},{"id":"373d349505d9243a","front":"【選択問題】次のうち「誤っているもの」を選べ。\nA. ワイルドカードマスクの0は一致を要求する\nB. ワイルドカードマスクの1は無視を意味する\nC. 0.0.0.255は/24範囲の指定に使える\nD. 0.0.0.0はすべてのアドレスを意味する","back":"D。0.0.0.0は全ビット一致、つまり特定ホスト指定。すべてのアドレスは `any` または `0.0.0.0 255.255.255.255`。","comment":"選択問題/誤り選択/ACL","sourceIndex":147},{"id":"c14e147784d1e8bd","front":"【選択問題】次のうち「誤っているもの」を選べ。\nA. 両端dynamic autoでは通常trunkにならない\nB. dynamic desirableは積極的にtrunk形成を試みる\nC. DTPはCisco独自プロトコルである\nD. VTPはトランク交渉を行うプロトコルである","back":"D。トランク交渉はDTP。VTPはVLAN情報の管理・同期に関係する。","comment":"選択問題/誤り選択/DTP/VTP","sourceIndex":148},{"id":"ab03538440668d2a","front":"【選択問題】次のうち「誤っているもの」を選べ。\nA. IPv6基本ヘッダは固定長40バイト\nB. IPv6基本ヘッダにはヘッダチェックサムがある\nC. IPv6にはブロードキャストがない\nD. IPv6のTTL相当はHop Limit","back":"B。IPv6基本ヘッダにヘッダチェックサムはない。","comment":"選択問題/誤り選択/IPv6","sourceIndex":149},{"id":"809632b976dc3c38","front":"【選択問題】次のうち「誤っているもの」を選べ。\nA. 802.1Xのサプリカントは認証を受ける端末\nB. 802.1XのオーセンティケータはスイッチやAPが担うことが多い\nC. 802.1Xの認証サーバとしてRADIUSがよく使われる\nD. 802.1Xの構成要素にはDTPが含まれる","back":"D。DTPはトランクネゴシエーションのプロトコルであり、802.1Xの構成要素ではない。","comment":"選択問題/誤り選択/802.1X","sourceIndex":150},{"id":"b1658656b8df3e95","front":"【トラブルシュート】PCから外部WebサイトへHTTP接続できない。HTTPの宛先ポートとして確認すべき番号は？","back":"TCP 80番。HTTPSならTCP 443番を確認する。","comment":"トラブルシュート/HTTP","sourceIndex":151},{"id":"b14f18bf164c2e63","front":"【トラブルシュート】スイッチでPCのMACアドレスがどのポートから学習されているか確認したい。使うコマンドは？","back":"`show mac address-table`。必要に応じて `show mac address-table address <MAC>` や `show mac address-table interface <IF>` で絞り込む。","comment":"トラブルシュート/MACテーブル","sourceIndex":152},{"id":"87d6759356f3666c","front":"【トラブルシュート】スタティックルートを設定したはずだが通信できない。まず確認したいコマンドを2つ答えよ。","back":"`show running-config` で設定の有無を確認し、`show ip route` で実際にルーティングテーブルへ載っているか確認する。","comment":"トラブルシュート/Static Route","sourceIndex":153},{"id":"fa549bb79871b78a","front":"【トラブルシュート】OSPFで期待した経路が選ばれない。インターフェイスのコストやHello/Deadを確認するコマンドは？","back":"`show ip ospf interface`。インターフェイスごとのOSPF情報を確認できる。","comment":"トラブルシュート/OSPF","sourceIndex":154},{"id":"5b81836bb9d90254","front":"【トラブルシュート】ACLで通信が通らない。ワイルドカードマスク確認時の基本ルールは？","back":"0は一致、1は無視。`host` と `any` の意味も確認する。","comment":"トラブルシュート/ACL","sourceIndex":155},{"id":"b045aae7b5351c3f","front":"【トラブルシュート】トランクになるはずのリンクがtrunkにならない。DTP観点で確認することは？","back":"両端のswitchport modeを確認する。両端dynamic autoだとtrunkにならない。`show interfaces switchport` や `show dtp interface` を使う。","comment":"トラブルシュート/DTP","sourceIndex":156},{"id":"39b9ca80f49ee72b","front":"【トラブルシュート】NAT設定後に変換が発生しない。確認すべきinside/outsideの観点は？","back":"LAN側IFに `ip nat inside`、外部側IFに `ip nat outside` が正しく設定されているか確認する。","comment":"トラブルシュート/NAT","sourceIndex":157},{"id":"e2e96f940674c1f4","front":"【トラブルシュート】NATのACLが間違っていると何が起きるか？","back":"NAT対象の内部アドレスが正しく一致せず、変換が発生しない、または意図しない通信が変換される。","comment":"トラブルシュート/NAT/ACL","sourceIndex":158},{"id":"d2a636fcb4138b68","front":"【トラブルシュート】IPv6で近隣のMACアドレス解決に関係するプロトコルは？","back":"NDP。Neighbor Solicitation / Neighbor Advertisement などをICMPv6で行う。","comment":"トラブルシュート/IPv6/NDP","sourceIndex":159},{"id":"caa37963b6f38bd4","front":"【トラブルシュート】802.1X認証で端末がネットワーク利用できない。3要素として確認するものは？","back":"サプリカント、オーセンティケータ、認証サーバ。端末側設定、スイッチ/AP側設定、RADIUSサーバ連携を確認する。","comment":"トラブルシュート/802.1X","sourceIndex":160},{"id":"0209947c4f1aaf7e","front":"【3点セット】DTPトランク関連で覚えるべき「設定モード・設定コマンド・確認コマンド」は？","back":"設定モードはインターフェイスモード。設定は `switchport mode trunk|dynamic desirable|dynamic auto`。確認は `show interfaces trunk`、`show interfaces switchport`、`show dtp interface`。","comment":"まとめ/DTP","sourceIndex":161},{"id":"f4819e73a0a9a0e7","front":"【3点セット】NAT関連で覚えるべき「設定モード・設定コマンド・確認コマンド」は？","back":"inside/outsideはインターフェイスモード、変換ルールはグローバルモード。確認は `show ip nat translations` と `show ip nat statistics`。","comment":"まとめ/NAT","sourceIndex":162},{"id":"dfff15ba54d4257e","front":"【3点セット】ACL関連で覚えるべき「番号付き・名前付き・適用コマンド」の違いは？","back":"番号付き作成は `access-list`、名前付き作成は `ip access-list`。インターフェイス適用は `ip access-group`、VTY適用は `access-class`。","comment":"まとめ/ACL","sourceIndex":163},{"id":"c0145e04ecc6ba25","front":"【3点セット】OSPFコスト関連で覚えるべき2つの変更方法は？","back":"直接変更はインターフェイスモードの `ip ospf cost`。計算元に影響するのはインターフェイスモードの `bandwidth`。全体の基準変更はOSPFルータモードの `auto-cost reference-bandwidth`。","comment":"まとめ/OSPF","sourceIndex":164},{"id":"40fa66f44062c790","front":"【3点セット】MACアドレステーブル関連で覚えるべき「学習対象・表示内容・確認コマンド」は？","back":"学習対象は送信元MACと受信ポート。表示内容はVLAN、MAC、Type、Port。確認は `show mac address-table`。","comment":"まとめ/MACテーブル","sourceIndex":165},{"id":"47bf7371983c0827","front":"【3点セット】802.1X関連で覚えるべき「目的・3要素・代表プロトコル」は？","back":"目的はポートベースアクセス制御。3要素はサプリカント、オーセンティケータ、認証サーバ。認証連携ではRADIUS、認証方式の枠組みとしてEAPが関係する。","comment":"まとめ/802.1X","sourceIndex":166},{"id":"febf90374791ad10","front":"【3点セット】IPv6ヘッダ関連で覚えるべき「固定長・廃止・変更フィールド」は？","back":"IPv6基本ヘッダは固定長40バイト。ヘッダチェックサムはない。TTL相当はHop Limit、Protocol相当はNext Header。","comment":"まとめ/IPv6","sourceIndex":167},{"id":"292ef82c7142cfff","front":"【3点セット】HTTP/HTTPS関連で覚えるべきポート番号は？","back":"HTTPはTCP 80、HTTPSはTCP 443。SSH 22、Telnet 23とセットで覚えると混同しにくい。","comment":"まとめ/ポート番号","sourceIndex":168},{"id":"7576532e0b8eb970","front":"【復習】HSRP、VRRP、GLBPのうちCisco独自はどれか？","back":"HSRPとGLBPはCisco独自。VRRPは標準化されたFHRP。","comment":"復習/HSRP","sourceIndex":169},{"id":"7a54b4f2f7cb0741","front":"【復習】STPのHello timerのデフォルト値は？","back":"2秒。STPのタイマー系はひっかけで出やすい。","comment":"復習/STP","sourceIndex":170},{"id":"1f810a961c49410e","front":"【復習】BPDU Guardをインターフェイスに設定するコマンドは？","back":"`spanning-tree bpduguard enable`。インターフェイスコンフィギュレーションモードで設定する。","comment":"復習/STP/BPDU Guard","sourceIndex":171},{"id":"9d13844fd0629f6d","front":"【復習】Root Guardをインターフェイスに設定するコマンドは？","back":"`spanning-tree guard root`。インターフェイスコンフィギュレーションモードで設定する。","comment":"復習/STP/Root Guard","sourceIndex":172},{"id":"d26d82b441e657af","front":"【復習】EtherChannelのPAgPとLACPの違いは？","back":"PAgPはCisco独自、LACPはIEEE標準。LACPは802.3ad/802.1AX系として扱われる。","comment":"復習/EtherChannel","sourceIndex":173},{"id":"a10a7ba8b6b0cac7","front":"【復習】ポートセキュリティで最大MAC数を設定するコマンドは？","back":"`switchport port-security maximum <数>`。インターフェイスコンフィギュレーションモードで設定する。","comment":"復習/Port Security","sourceIndex":174},{"id":"81d015ac2fd66720","front":"【復習】スティッキーラーニングを有効化するコマンドは？","back":"`switchport port-security mac-address sticky`。インターフェイスコンフィギュレーションモードで設定する。","comment":"復習/Port Security","sourceIndex":175},{"id":"942b61e68869f83e","front":"【復習】NTPで同期先サーバ情報を確認するコマンドは？","back":"`show ntp associations`。NTPの同期相手を確認できる。","comment":"復習/NTP","sourceIndex":176},{"id":"7ddaefa136471b9c","front":"【復習】LLDP隣接機器の詳細情報を確認するコマンドは？","back":"`show lldp neighbors detail`。","comment":"復習/LLDP","sourceIndex":177},{"id":"bfb050582ba6e720","front":"【復習】CDP隣接機器の詳細情報を確認するコマンドは？","back":"`show cdp neighbors detail`。","comment":"復習/CDP","sourceIndex":178},{"id":"6bff4e91aea3b11f","front":"【復習】PPPで使われる認証方式を2つ答えよ。","back":"PAPとCHAP。CHAPはチャレンジ・レスポンス方式で、PAPより安全性が高い。","comment":"復習/WAN/PPP","sourceIndex":179},{"id":"3a84edd59aaafa81","front":"【復習】HDLCはOSI参照モデルのどの層のプロトコルか？","back":"第2層、データリンク層のプロトコル。","comment":"復習/WAN/HDLC","sourceIndex":180},{"id":"ccab813da1bb749b","front":"【復習】MPLSの転送では何を使うか？","back":"ラベル。IPアドレスだけでなくラベルを使って転送判断を行う。","comment":"復習/WAN/MPLS","sourceIndex":181}]}]</script>
+<script>
+(function() {
+  'use strict';
+
+  const APP_KEY = 'ccnaWrittenQuizMultiBank.v1';
+  const BUILTIN_BANKS = JSON.parse(document.getElementById('builtin-data').textContent);
+  const dom = {};
+  let state = {
+    currentBankId: BUILTIN_BANKS[0] ? BUILTIN_BANKS[0].id : '',
+    customBanks: [],
+    progressByBank: {},
+    session: { id: '', bankId: '', queue: [], index: 0, answerVisible: false, draftAnswers: {}, judged: {}, completed: false, settings: null },
+    history: []
+  };
+
+  function $(id) { return document.getElementById(id); }
+
+  function initDom() {
+    [
+      'errorBanner','bankSelect','statsBankSelect','modeSelect','questionCount','minWeight','fillIfShort','autoNext','startBtn',
+      'bankSummary','sessionInfo','questionInfo','sessionProgress','questionText','userAnswer','showAnswerBtn','copyQuestionMemoBtn','prevBtn','nextBtn',
+      'answerBox','judgeButtons','correctBtn','wrongBtn','undoBtn','finishBox','repeatSameBtn','lastAction','statsFilter','statsSort','statsSummary','statsTable',
+      'exportStatsCsvBtn','resetStatsFilterBtn','bankList','csvName','csvFile','importCsvBtn','csvImportResult','deleteBankSelect','deleteBankBtn',
+      'exportProgressBtn','exportAllStatsBtn','progressFile','replaceOnImport','importProgressBtn','progressImportResult',
+      'resetCurrentProgressBtn','resetAllProgressBtn'
+    ].forEach(id => dom[id] = $(id));
+  }
+
+  function showError(message, err) {
+    const detail = err && (err.stack || err.message) ? '\n' + (err.stack || err.message) : '';
+    dom.errorBanner.textContent = message + detail;
+    dom.errorBanner.classList.remove('hidden-view');
+    console.error(message, err || '');
+  }
+
+  function safeLoad() {
+    try {
+      const raw = localStorage.getItem(APP_KEY);
+      if (!raw) return;
+      const loaded = JSON.parse(raw);
+      state = { ...state, ...loaded };
+      if (!state.progressByBank || typeof state.progressByBank !== 'object') state.progressByBank = {};
+      if (!Array.isArray(state.customBanks)) state.customBanks = [];
+      if (!Array.isArray(state.history)) state.history = [];
+      if (!state.session || typeof state.session !== 'object') state.session = { id: '', bankId: '', queue: [], index: 0, answerVisible: false, draftAnswers: {}, judged: {}, completed: false, settings: null };
+      if (!state.session.draftAnswers || typeof state.session.draftAnswers !== 'object') state.session.draftAnswers = {};
+      if (!state.session.judged || typeof state.session.judged !== 'object') state.session.judged = {};
+      if (typeof state.session.completed !== 'boolean') state.session.completed = false;
+      if (!('settings' in state.session)) state.session.settings = null;
+      if (!state.session.id) state.session.id = '';
+    } catch (err) { showError('保存済みデータの読み込みでエラーが出ました。アプリは初期状態で起動します。', err); }
+  }
+
+  function safeSave() {
+    try {
+      const payload = {
+        currentBankId: state.currentBankId,
+        customBanks: state.customBanks,
+        progressByBank: state.progressByBank,
+        session: state.session,
+        history: state.history.slice(-200)
+      };
+      localStorage.setItem(APP_KEY, JSON.stringify(payload));
+    } catch (err) {
+      showError('保存に失敗しました。ブラウザの保存容量やプライベートモードが原因の可能性があります。', err);
+    }
+  }
+
+  function allBanks() { return [...BUILTIN_BANKS, ...state.customBanks]; }
+  function getBank(id) { return allBanks().find(b => b.id === id) || allBanks()[0]; }
+  function currentBank() { return getBank(state.currentBankId); }
+  function getProgress(bankId) {
+    if (!state.progressByBank[bankId]) state.progressByBank[bankId] = {};
+    return state.progressByBank[bankId];
+  }
+  function getQProgress(bankId, qid) {
+    const bankProgress = getProgress(bankId);
+    if (!bankProgress[qid]) bankProgress[qid] = { attempts: 0, correct: 0, lastResult: '', lastAnsweredAt: '' };
+    return bankProgress[qid];
+  }
+
+  function pct(n, d) { return d > 0 ? (n / d * 100) : null; }
+  function fmtPct(value) { return value === null || Number.isNaN(value) ? '未出題' : value.toFixed(1) + '%'; }
+  function fmtInt(value) { return String(Math.round(value)); }
+  function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
+  function escapeCsvCell(value) {
+    const s = String(value == null ? '' : value);
+    return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+  function downloadText(filename, content, mime) {
+    const blob = new Blob([content], { type: mime || 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 0);
+  }
+  function hashString(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return (h >>> 0).toString(16).padStart(8, '0');
+  }
+  function slug(str) {
+    return String(str || 'custom').trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9_\-぀-ヿ㐀-鿿]/g, '').slice(0, 40) || 'custom';
+  }
+
+  function bankStats(bankId) {
+    const bank = getBank(bankId);
+    const progress = getProgress(bank.id);
+    let attemptedQuestions = 0, unattempted = 0, attempts = 0, correct = 0;
+    bank.questions.forEach(q => {
+      const p = progress[q.id];
+      if (p && p.attempts > 0) { attemptedQuestions++; attempts += p.attempts; correct += p.correct; }
+      else unattempted++;
+    });
+    return { total: bank.questions.length, attemptedQuestions, unattempted, attempts, correct, accuracy: pct(correct, attempts) };
+  }
+
+  function questionAccuracy(bankId, qid) {
+    const p = getQProgress(bankId, qid);
+    return pct(p.correct, p.attempts);
+  }
+
+  function weakWeight(bankId, q, minWeightInput) {
+    const p = getQProgress(bankId, q.id);
+    const minWeight = clamp(Number(minWeightInput) || 0, 0, 20);
+    if (p.attempts <= 0) return Math.max(minWeight + 12, 14);
+    const acc = p.correct / p.attempts;
+    const observedError = clamp(1 - acc, 0, 1);
+
+    // 正答率100%の問題は、最低重みだけで扱う。
+    // 最低重みが0なら重みも0になり、苦手重みモードでは出題されない。
+    if (observedError <= 0) return minWeight;
+
+    // 不確実性補正は、誤答率に応じて按分して加算する。
+    // これにより99%問題は100%問題より出やすい一方、100%問題へ補正だけが乗る事故を防ぐ。
+    const uncertainty = 1 / Math.sqrt(p.attempts + 1);
+    const uncertaintyShare = clamp(observedError / 0.01, 0, 1);
+    const estimatedWeakness = clamp(observedError + 0.15 * uncertainty * uncertaintyShare, 0, 1);
+    const weight = minWeight + 100 * Math.pow(estimatedWeakness, 1.15);
+    return Math.max(weight, 0);
+  }
+
+  function weightedSample(items, count, weightFn) {
+    const pool = items.slice();
+    const out = [];
+    while (pool.length && out.length < count) {
+      let total = 0;
+      const weights = pool.map(item => {
+        const raw = Number(weightFn(item));
+        const w = Number.isFinite(raw) && raw > 0 ? raw : 0;
+        total += w;
+        return w;
+      });
+      if (total <= 0) break;
+      let r = Math.random() * total;
+      let chosen = 0;
+      for (let i = 0; i < weights.length; i++) {
+        r -= weights[i];
+        if (r <= 0) { chosen = i; break; }
+      }
+      out.push(pool.splice(chosen, 1)[0]);
+    }
+    return out;
+  }
+
+  function randomSample(items, count) {
+    const pool = items.slice();
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    return pool.slice(0, count);
+  }
+
+  function buildSessionQueue() {
+    const bank = currentBank();
+    const count = clamp(parseInt(dom.questionCount.value || '10', 10), 1, bank.questions.length || 1);
+    dom.questionCount.value = String(count);
+    const mode = dom.modeSelect.value;
+    let selected = [];
+    if (mode === 'random') {
+      selected = randomSample(bank.questions, count);
+    } else if (mode === 'unseen') {
+      const unseen = bank.questions.filter(q => getQProgress(bank.id, q.id).attempts <= 0);
+      selected = randomSample(unseen, count);
+      if (selected.length < count && dom.fillIfShort.checked) {
+        const selectedIds = new Set(selected.map(q => q.id));
+        const rest = bank.questions.filter(q => !selectedIds.has(q.id));
+        selected = selected.concat(randomSample(rest, count - selected.length));
+      }
+    } else {
+      selected = weightedSample(bank.questions, count, q => weakWeight(bank.id, q, dom.minWeight.value));
+    }
+    return selected.map(q => q.id);
+  }
+
+  function renderBankSelectors() {
+    const banks = allBanks();
+    const options = banks.map(b => `<option value="${htmlEscape(b.id)}">${htmlEscape(b.name)}（${b.questions.length}問）</option>`).join('');
+    [dom.bankSelect, dom.statsBankSelect].forEach(sel => {
+      const prev = sel.value || state.currentBankId;
+      sel.innerHTML = options;
+      sel.value = getBank(prev) ? prev : banks[0]?.id;
+    });
+    dom.bankSelect.value = state.currentBankId;
+    dom.statsBankSelect.value = dom.statsBankSelect.value || state.currentBankId;
+
+    const customOptions = state.customBanks.length
+      ? state.customBanks.map(b => `<option value="${htmlEscape(b.id)}">${htmlEscape(b.name)}（${b.questions.length}問）</option>`).join('')
+      : '<option value="">削除できるカスタム問題集はありません</option>';
+    dom.deleteBankSelect.innerHTML = customOptions;
+    dom.deleteBankBtn.disabled = state.customBanks.length === 0;
+  }
+
+  function htmlEscape(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function renderBankSummary() {
+    const bank = currentBank();
+    const s = bankStats(bank.id);
+    dom.bankSummary.innerHTML = `
+      <div class="stat"><div class="k">問題数</div><div class="v">${s.total}</div></div>
+      <div class="stat"><div class="k">未出題</div><div class="v">${s.unattempted}</div></div>
+      <div class="stat"><div class="k">総判定</div><div class="v">${s.attempts}</div></div>
+      <div class="stat"><div class="k">全体正答率</div><div class="v">${fmtPct(s.accuracy)}</div></div>
+    `;
+  }
+
+  function currentQuestion() {
+    const bank = getBank(state.session.bankId || state.currentBankId);
+    const qid = state.session.queue[state.session.index];
+    return bank.questions.find(q => q.id === qid) || null;
+  }
+
+  function newSessionId() {
+    return 'session_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+  }
+
+  function captureSessionSettings() {
+    return {
+      bankId: state.currentBankId,
+      mode: dom.modeSelect.value,
+      questionCount: clamp(parseInt(dom.questionCount.value || '10', 10), 1, 9999),
+      minWeight: clamp(Number(dom.minWeight.value) || 0, 0, 20),
+      fillIfShort: !!dom.fillIfShort.checked,
+      autoNext: !!dom.autoNext.checked
+    };
+  }
+
+  function applySessionSettings(settings) {
+    if (!settings || typeof settings !== 'object') return;
+    if (settings.bankId && getBank(settings.bankId)) state.currentBankId = settings.bankId;
+    if (settings.mode) dom.modeSelect.value = settings.mode;
+    if (Number.isFinite(Number(settings.questionCount))) dom.questionCount.value = String(settings.questionCount);
+    if (Number.isFinite(Number(settings.minWeight))) dom.minWeight.value = String(settings.minWeight);
+    if ('fillIfShort' in settings) dom.fillIfShort.checked = !!settings.fillIfShort;
+    if ('autoNext' in settings) dom.autoNext.checked = !!settings.autoNext;
+    if (dom.bankSelect) dom.bankSelect.value = state.currentBankId;
+  }
+
+  function sessionAnsweredCount() {
+    if (!state.session || !Array.isArray(state.session.queue)) return 0;
+    const judged = state.session.judged || {};
+    return state.session.queue.reduce((n, qid) => n + (judged[qid] ? 1 : 0), 0);
+  }
+
+  function isSessionComplete() {
+    return !!(state.session && Array.isArray(state.session.queue) && state.session.queue.length > 0 && sessionAnsweredCount() >= state.session.queue.length);
+  }
+
+  function findNextUnjudgedIndex(start) {
+    if (!state.session || !Array.isArray(state.session.queue)) return -1;
+    const judged = state.session.judged || {};
+    for (let i = Math.max(0, start || 0); i < state.session.queue.length; i++) {
+      if (!judged[state.session.queue[i]]) return i;
+    }
+    for (let i = 0; i < Math.max(0, start || 0); i++) {
+      if (!judged[state.session.queue[i]]) return i;
+    }
+    return -1;
+  }
+
+  function repeatSameConditions() {
+    const settings = state.session && state.session.settings ? { ...state.session.settings } : captureSessionSettings();
+    startSession(settings);
+  }
+
+  function saveCurrentDraft() {
+    const q = currentQuestion();
+    if (!q || !dom.userAnswer) return;
+    if (!state.session.draftAnswers || typeof state.session.draftAnswers !== 'object') state.session.draftAnswers = {};
+    state.session.draftAnswers[q.id] = dom.userAnswer.value || '';
+  }
+
+  async function writeClipboardText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.setAttribute('readonly', '');
+    area.style.position = 'fixed';
+    area.style.left = '-9999px';
+    area.style.top = '0';
+    document.body.appendChild(area);
+    area.focus();
+    area.select();
+    try {
+      const ok = document.execCommand('copy');
+      if (!ok) throw new Error('document.execCommand(\'copy\') returned false');
+    } finally {
+      document.body.removeChild(area);
+    }
+  }
+
+  async function copyQuestionAndMemo() {
+    const bank = getBank(state.session.bankId || state.currentBankId);
+    const q = currentQuestion();
+    if (!q) {
+      dom.lastAction.textContent = 'コピー対象の問題がありません。';
+      return;
+    }
+    saveCurrentDraft();
+    const memo = state.session.draftAnswers && state.session.draftAnswers[q.id] ? state.session.draftAnswers[q.id] : '';
+    const text = [
+      `【問題集】${bank ? bank.name : ''}`,
+      `【問題番号】#${q.sourceIndex || ''}`,
+      '',
+      '【問題文】',
+      q.front || '',
+      '',
+      '【回答メモ】',
+      memo
+    ].join('\n');
+    try {
+      await writeClipboardText(text);
+      dom.lastAction.textContent = '問題文＋回答メモをクリップボードにコピーしました。';
+    } catch (err) {
+      showError('クリップボードへのコピーに失敗しました。ブラウザの権限設定により制限されている可能性があります。', err);
+    }
+  }
+
+  function renderQuestion() {
+    const bank = getBank(state.session.bankId || state.currentBankId);
+    const q = currentQuestion();
+    const total = state.session.queue.length;
+    const pos = total ? state.session.index + 1 : 0;
+    const answered = sessionAnsweredCount();
+    const complete = isSessionComplete();
+    state.session.completed = complete;
+    dom.sessionInfo.textContent = total ? `${pos} / ${total}（判定 ${answered}/${total}${complete ? ' 完了' : ''}）` : '未開始';
+    dom.sessionProgress.style.width = total ? `${Math.round(answered / total * 100)}%` : '0%';
+    if (!q) {
+      dom.questionInfo.textContent = '問題なし';
+      dom.questionText.textContent = '「この設定で開始」を押すと出題されます。';
+      dom.answerBox.classList.add('hidden');
+      dom.answerBox.textContent = '';
+      dom.prevBtn.disabled = true;
+      dom.nextBtn.disabled = true;
+      dom.showAnswerBtn.disabled = true;
+      if (dom.copyQuestionMemoBtn) dom.copyQuestionMemoBtn.disabled = true;
+      if (dom.judgeButtons) dom.judgeButtons.classList.remove('hidden-view');
+      if (dom.finishBox) dom.finishBox.classList.add('hidden-view');
+      dom.correctBtn.disabled = true;
+      dom.wrongBtn.disabled = true;
+      return;
+    }
+    const p = getQProgress(bank.id, q.id);
+    const acc = pct(p.correct, p.attempts);
+    const qJudged = !!(state.session.judged && state.session.judged[q.id]);
+    dom.questionInfo.textContent = `${bank.name} / #${q.sourceIndex} / ${fmtPct(acc)} / ${p.attempts}回${qJudged ? ' / このセッションで判定済み' : ''}`;
+    dom.questionText.textContent = q.front;
+    dom.answerBox.textContent = q.back || '（模範解答なし）';
+    dom.answerBox.classList.toggle('hidden', !state.session.answerVisible);
+    if (!state.session.draftAnswers || typeof state.session.draftAnswers !== 'object') state.session.draftAnswers = {};
+    if (dom.userAnswer.dataset.questionId !== q.id) {
+      dom.userAnswer.value = state.session.draftAnswers[q.id] || '';
+      dom.userAnswer.dataset.questionId = q.id;
+    }
+    dom.prevBtn.disabled = state.session.index <= 0;
+    dom.nextBtn.disabled = state.session.index >= total - 1;
+    dom.showAnswerBtn.disabled = false;
+    if (dom.copyQuestionMemoBtn) dom.copyQuestionMemoBtn.disabled = false;
+    if (dom.judgeButtons) dom.judgeButtons.classList.toggle('hidden-view', complete);
+    if (dom.finishBox) dom.finishBox.classList.toggle('hidden-view', !complete);
+    dom.correctBtn.disabled = qJudged || complete;
+    dom.wrongBtn.disabled = qJudged || complete;
+    dom.showAnswerBtn.textContent = state.session.answerVisible ? '模範解答を隠す' : '模範解答を表示';
+  }
+
+  function renderStats() {
+    const bankId = dom.statsBankSelect.value || state.currentBankId;
+    const bank = getBank(bankId);
+    if (!bank) return;
+    const s = bankStats(bank.id);
+    dom.statsSummary.textContent = `${bank.name}：${s.total}問 / 未出題 ${s.unattempted}問 / 総判定 ${s.attempts}回 / 正解 ${s.correct}回 / 全体正答率 ${fmtPct(s.accuracy)}`;
+    const filter = dom.statsFilter.value.trim().toLowerCase();
+    const rows = bank.questions.map(q => {
+      const p = getQProgress(bank.id, q.id);
+      const acc = pct(p.correct, p.attempts);
+      return { q, p, acc };
+    }).filter(r => {
+      if (!filter) return true;
+      const hay = `${r.q.front}
+${r.q.back}
+${r.q.comment}`.toLowerCase();
+      return hay.includes(filter);
+    });
+    const sort = dom.statsSort.value;
+    rows.sort((a, b) => {
+      if (sort === 'attemptsAsc') return a.p.attempts - b.p.attempts || a.q.sourceIndex - b.q.sourceIndex;
+      if (sort === 'unseenFirst') return (a.p.attempts > 0) - (b.p.attempts > 0) || a.q.sourceIndex - b.q.sourceIndex;
+      if (sort === 'indexAsc') return a.q.sourceIndex - b.q.sourceIndex;
+      const aa = a.acc === null ? -1 : a.acc;
+      const bb = b.acc === null ? -1 : b.acc;
+      return aa - bb || a.p.attempts - b.p.attempts || a.q.sourceIndex - b.q.sourceIndex;
+    });
+    const head = `<thead><tr><th>#</th><th>正答率</th><th>正解/判定</th><th>コメント</th><th>問題</th><th>模範解答</th></tr></thead>`;
+    const body = rows.map(r => `
+      <tr>
+        <td>${r.q.sourceIndex}</td>
+        <td><span class="badge ${r.acc === null ? 'yellow' : (r.acc >= 80 ? 'green' : 'red')}">${fmtPct(r.acc)}</span></td>
+        <td>${r.p.correct} / ${r.p.attempts}</td>
+        <td>${htmlEscape(r.q.comment)}</td>
+        <td>${htmlEscape(r.q.front)}</td>
+        <td>${htmlEscape(r.q.back)}</td>
+      </tr>`).join('');
+    dom.statsTable.innerHTML = head + `<tbody>${body}</tbody>`;
+  }
+
+  function renderBankList() {
+    const banks = allBanks();
+    dom.bankList.innerHTML = banks.map(b => {
+      const s = bankStats(b.id);
+      const builtin = BUILTIN_BANKS.some(x => x.id === b.id);
+      return `<div class="notice" style="margin-bottom: 10px;">
+        <div class="row" style="align-items: flex-start;">
+          <div style="flex: 3;">
+            <strong>${htmlEscape(b.name)}</strong>
+            <div class="small">${htmlEscape(b.description || '')}</div>
+            <div class="small mono">ID: ${htmlEscape(b.id)} / ${builtin ? '内蔵' : 'カスタムCSV'}</div>
+          </div>
+          <div style="flex: 2;">
+            <span class="badge">${b.questions.length}問</span>
+            <span class="badge green">正答率 ${fmtPct(s.accuracy)}</span>
+            <span class="badge yellow">未出題 ${s.unattempted}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderAll() {
+    renderBankSelectors();
+    renderBankSummary();
+    renderQuestion();
+    renderStats();
+    renderBankList();
+    safeSave();
+  }
+
+  function switchView(viewId) {
+    ['quizView','statsView','banksView','dataView','helpView'].forEach(id => $(id).classList.toggle('hidden-view', id !== viewId));
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.view === viewId));
+    if (viewId === 'statsView') renderStats();
+    if (viewId === 'banksView') renderBankList();
+  }
+
+  function startSession(settingsOverride) {
+    if (settingsOverride) applySessionSettings(settingsOverride);
+    const bank = currentBank();
+    if (!bank || bank.questions.length === 0) { alert('この問題集には問題がありません。'); return; }
+    const queue = buildSessionQueue();
+    const settings = captureSessionSettings();
+    if (queue.length === 0) {
+      if (dom.modeSelect.value === 'weak' && clamp(Number(dom.minWeight.value) || 0, 0, 20) === 0) {
+        alert('出題対象がありません。苦手重みモードで最低重みが0の場合、正答率100%の問題は抽選対象から外れます。最低重みを上げるか、ランダム出題を使ってください。');
+      } else {
+        alert('出題対象がありません。未出題モードの場合は、補充を有効にするか別モードを使ってください。');
+      }
+      return;
+    }
+    state.session = { id: newSessionId(), bankId: bank.id, queue, index: 0, answerVisible: false, draftAnswers: {}, judged: {}, completed: false, settings };
+    dom.lastAction.textContent = '';
+    renderAll();
+  }
+
+  function judge(isCorrect) {
+    const bank = getBank(state.session.bankId || state.currentBankId);
+    const q = currentQuestion();
+    if (!q) return;
+    if (!state.session.judged || typeof state.session.judged !== 'object') state.session.judged = {};
+    if (state.session.completed || isSessionComplete()) {
+      state.session.completed = true;
+      dom.lastAction.textContent = 'このセッションは完了済みです。同じ条件で続ける場合は「同条件でもう一度」を押してください。';
+      renderQuestion();
+      safeSave();
+      return;
+    }
+    if (state.session.judged[q.id]) {
+      dom.lastAction.textContent = 'この問題はこのセッション内で判定済みです。修正する場合は「直前の判定を取り消し」を使ってください。';
+      renderQuestion();
+      safeSave();
+      return;
+    }
+    saveCurrentDraft();
+    const p = getQProgress(bank.id, q.id);
+    p.attempts += 1;
+    if (isCorrect) p.correct += 1;
+    p.lastResult = isCorrect ? 'correct' : 'wrong';
+    p.lastAnsweredAt = new Date().toISOString();
+    state.session.judged[q.id] = true;
+    const action = { bankId: bank.id, questionId: q.id, isCorrect, at: p.lastAnsweredAt, sessionIndex: state.session.index, sessionId: state.session.id };
+    state.history.push(action);
+
+    if (isSessionComplete()) {
+      state.session.completed = true;
+      state.session.answerVisible = true;
+      dom.lastAction.textContent = `${state.session.queue.length}問の判定が完了しました。もう一度やる場合は「同条件でもう一度」を押してください。`;
+    } else if (dom.autoNext.checked) {
+      const nextIndex = findNextUnjudgedIndex(state.session.index + 1);
+      if (nextIndex >= 0) {
+        state.session.index = nextIndex;
+        state.session.answerVisible = false;
+      } else {
+        state.session.answerVisible = true;
+      }
+      dom.lastAction.textContent = `${isCorrect ? '正解' : '不正解'}として記録しました。押し間違いなら「直前の判定を取り消し」を押してください。`;
+    } else {
+      state.session.answerVisible = true;
+      dom.lastAction.textContent = `${isCorrect ? '正解' : '不正解'}として記録しました。この問題の判定ボタンは無効化しました。次の問題へ進んでください。`;
+    }
+    renderAll();
+  }
+
+  function undo() {
+    const action = state.history.pop();
+    if (!action) { dom.lastAction.textContent = '取り消せる判定がありません。'; return; }
+    const p = getQProgress(action.bankId, action.questionId);
+    p.attempts = Math.max(0, p.attempts - 1);
+    if (action.isCorrect) p.correct = Math.max(0, p.correct - 1);
+    if (p.attempts === 0) { p.correct = 0; p.lastResult = ''; p.lastAnsweredAt = ''; }
+    state.currentBankId = action.bankId;
+    const bank = getBank(action.bankId);
+    const idx = state.session.queue.indexOf(action.questionId);
+    if (state.session.bankId !== action.bankId || idx === -1) {
+      state.session = { id: action.sessionId || newSessionId(), bankId: action.bankId, queue: [action.questionId], index: 0, answerVisible: true, draftAnswers: state.session.draftAnswers || {}, judged: {}, completed: false, settings: state.session.settings || null };
+    } else {
+      state.session.index = idx;
+      state.session.answerVisible = true;
+    }
+    if (state.session && state.session.judged && (!action.sessionId || state.session.id === action.sessionId)) {
+      delete state.session.judged[action.questionId];
+      state.session.completed = false;
+    }
+    dom.lastAction.textContent = '直前の判定を取り消しました。必要なら再判定してください。';
+    renderAll();
+  }
+
+  function exportStatsCsv(bankIds) {
+    const ids = Array.isArray(bankIds) ? bankIds : [bankIds];
+    const lines = [['BankName','BankId','Index','Accuracy','Correct','Attempts','Unattempted','Comment','FrontText','BackText'].map(escapeCsvCell).join(',')];
+    ids.forEach(bankId => {
+      const bank = getBank(bankId);
+      bank.questions.forEach(q => {
+        const p = getQProgress(bank.id, q.id);
+        const acc = pct(p.correct, p.attempts);
+        lines.push([bank.name, bank.id, q.sourceIndex, acc === null ? '' : acc.toFixed(1), p.correct, p.attempts, p.attempts === 0 ? 1 : 0, q.comment, q.front, q.back].map(escapeCsvCell).join(','));
+      });
+    });
+    const filename = ids.length === 1 ? `${slug(getBank(ids[0]).name)}_stats.csv` : 'all_banks_stats.csv';
+    downloadText(filename, '﻿' + lines.join('\n'), 'text/csv;charset=utf-8');
+  }
+
+  function parseCsv(text) {
+    const rows = [];
+    let row = [], cell = '', inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      const next = text[i + 1];
+      if (inQuotes) {
+        if (ch === '"' && next === '"') { cell += '"'; i++; }
+        else if (ch === '"') inQuotes = false;
+        else cell += ch;
+      } else {
+        if (ch === '"') inQuotes = true;
+        else if (ch === ',') { row.push(cell); cell = ''; }
+        else if (ch === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
+        else if (ch === '\n') { /* ignore */ }
+        else cell += ch;
+      }
+    }
+    row.push(cell);
+    if (row.length > 1 || row[0] !== '') rows.push(row);
+    return rows;
+  }
+
+  function bankFromCsv(text, name, filename) {
+    const rows = parseCsv(text.replace(/^﻿/, ''));
+    if (!rows.length) throw new Error('CSVが空です。');
+    const header = rows[0].map(h => h.trim());
+    const hasNamed = header.includes('FrontText') || header.includes('BackText');
+    const frontIdx = hasNamed ? header.indexOf('FrontText') : 0;
+    const backIdx = hasNamed ? header.indexOf('BackText') : 1;
+    const commentIdx = hasNamed ? header.indexOf('Comment') : 2;
+    const dataRows = hasNamed ? rows.slice(1) : rows;
+    const questions = dataRows.map((r, idx) => {
+      const front = (r[frontIdx] || '').trim();
+      const back = (r[backIdx] || '').trim();
+      const comment = commentIdx >= 0 ? (r[commentIdx] || '').trim() : '';
+      if (!front && !back) return null;
+      const qid = hashString(`${front}␟${back}␟${comment}␟${idx}`);
+      return { id: qid, front, back, comment, sourceIndex: idx + 1 };
+    }).filter(Boolean);
+    if (!questions.length) throw new Error('問題として読み込める行がありません。');
+    const actualName = name.trim() || filename.replace(/\.csv$/i, '') || 'カスタム問題集';
+    const signature = hashString(questions.map(q => q.id).join('|'));
+    return {
+      id: `custom_${slug(actualName)}_${signature}`,
+      name: actualName,
+      description: `CSVから追加：${filename}`,
+      createdAt: new Date().toISOString(),
+      questionCount: questions.length,
+      questions
+    };
+  }
+
+  async function readFileAsText(file) {
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = () => reject(reader.error || new Error('ファイル読み込みに失敗しました。'));
+      reader.readAsText(file, 'UTF-8');
+    });
+  }
+
+  function mergeProgressData(imported, replace) {
+    if (!imported || typeof imported !== 'object') throw new Error('JSON形式が不正です。');
+    if (replace) {
+      state.progressByBank = imported.progressByBank && typeof imported.progressByBank === 'object' ? imported.progressByBank : {};
+      state.customBanks = Array.isArray(imported.customBanks) ? imported.customBanks : [];
+      state.history = Array.isArray(imported.history) ? imported.history : [];
+    } else {
+      if (Array.isArray(imported.customBanks)) {
+        imported.customBanks.forEach(bank => {
+          if (!bank || !bank.id || !Array.isArray(bank.questions)) return;
+          const idx = state.customBanks.findIndex(b => b.id === bank.id);
+          if (idx >= 0) state.customBanks[idx] = bank;
+          else state.customBanks.push(bank);
+        });
+      }
+      const ip = imported.progressByBank || {};
+      Object.keys(ip).forEach(bankId => {
+        if (!state.progressByBank[bankId]) state.progressByBank[bankId] = {};
+        Object.keys(ip[bankId] || {}).forEach(qid => {
+          const incoming = ip[bankId][qid] || {};
+          const current = state.progressByBank[bankId][qid] || { attempts: 0, correct: 0, lastResult: '', lastAnsweredAt: '' };
+          state.progressByBank[bankId][qid] = {
+            attempts: Math.max(Number(current.attempts) || 0, Number(incoming.attempts) || 0),
+            correct: Math.max(Number(current.correct) || 0, Number(incoming.correct) || 0),
+            lastResult: incoming.lastAnsweredAt && incoming.lastAnsweredAt > (current.lastAnsweredAt || '') ? (incoming.lastResult || '') : (current.lastResult || ''),
+            lastAnsweredAt: [current.lastAnsweredAt || '', incoming.lastAnsweredAt || ''].sort().pop()
+          };
+        });
+      });
+    }
+  }
+
+  function attachEvents() {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
+    dom.bankSelect.addEventListener('change', () => { state.currentBankId = dom.bankSelect.value; renderAll(); });
+    dom.statsBankSelect.addEventListener('change', renderStats);
+    dom.statsFilter.addEventListener('input', renderStats);
+    dom.statsSort.addEventListener('change', renderStats);
+    dom.startBtn.addEventListener('click', startSession);
+    dom.userAnswer.addEventListener('input', () => { saveCurrentDraft(); safeSave(); });
+    dom.showAnswerBtn.addEventListener('click', () => { saveCurrentDraft(); state.session.answerVisible = !state.session.answerVisible; renderQuestion(); safeSave(); });
+    dom.copyQuestionMemoBtn.addEventListener('click', copyQuestionAndMemo);
+    dom.prevBtn.addEventListener('click', () => { if (state.session.index > 0) { saveCurrentDraft(); state.session.index--; state.session.answerVisible = false; renderQuestion(); safeSave(); } });
+    dom.nextBtn.addEventListener('click', () => { if (state.session.index < state.session.queue.length - 1) { saveCurrentDraft(); state.session.index++; state.session.answerVisible = false; renderQuestion(); safeSave(); } });
+    dom.correctBtn.addEventListener('click', () => judge(true));
+    dom.wrongBtn.addEventListener('click', () => judge(false));
+    dom.undoBtn.addEventListener('click', undo);
+    if (dom.repeatSameBtn) dom.repeatSameBtn.addEventListener('click', repeatSameConditions);
+    dom.exportStatsCsvBtn.addEventListener('click', () => exportStatsCsv(dom.statsBankSelect.value || state.currentBankId));
+    dom.resetStatsFilterBtn.addEventListener('click', () => { dom.statsFilter.value = ''; dom.statsSort.value = 'accuracyAsc'; renderStats(); });
+    dom.importCsvBtn.addEventListener('click', async () => {
+      try {
+        const file = dom.csvFile.files && dom.csvFile.files[0];
+        if (!file) { alert('CSVファイルを選択してください。'); return; }
+        const text = await readFileAsText(file);
+        const bank = bankFromCsv(text, dom.csvName.value, file.name);
+        const idx = state.customBanks.findIndex(b => b.id === bank.id);
+        if (idx >= 0) state.customBanks[idx] = bank; else state.customBanks.push(bank);
+        state.currentBankId = bank.id;
+        dom.csvImportResult.textContent = `${bank.name} を ${bank.questions.length}問で追加しました。`;
+        dom.csvFile.value = '';
+        dom.csvName.value = '';
+        renderAll();
+        switchView('quizView');
+      } catch (err) { showError('CSVの読み込みに失敗しました。', err); }
+    });
+    dom.deleteBankBtn.addEventListener('click', () => {
+      const id = dom.deleteBankSelect.value;
+      if (!id) return;
+      const bank = getBank(id);
+      if (!bank || !confirm(`${bank.name} を削除しますか？
+進捗も削除する場合は、次の確認でOKしてください。`)) return;
+      state.customBanks = state.customBanks.filter(b => b.id !== id);
+      if (confirm('この問題集の進捗も削除しますか？')) delete state.progressByBank[id];
+      if (state.currentBankId === id) state.currentBankId = BUILTIN_BANKS[0].id;
+      renderAll();
+    });
+    dom.exportProgressBtn.addEventListener('click', () => {
+      const payload = {
+        app: 'ccna-written-quiz-multibank',
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        currentBankId: state.currentBankId,
+        progressByBank: state.progressByBank,
+        customBanks: state.customBanks,
+        history: state.history.slice(-500)
+      };
+      downloadText('ccna_quiz_progress.json', JSON.stringify(payload, null, 2), 'application/json;charset=utf-8');
+    });
+    dom.exportAllStatsBtn.addEventListener('click', () => exportStatsCsv(allBanks().map(b => b.id)));
+    dom.importProgressBtn.addEventListener('click', async () => {
+      try {
+        const file = dom.progressFile.files && dom.progressFile.files[0];
+        if (!file) { alert('進捗JSONファイルを選択してください。'); return; }
+        const text = await readFileAsText(file);
+        const imported = JSON.parse(text);
+        mergeProgressData(imported, dom.replaceOnImport.checked);
+        dom.progressImportResult.textContent = '進捗JSONをインポートしました。';
+        dom.progressFile.value = '';
+        renderAll();
+      } catch (err) { showError('進捗JSONのインポートに失敗しました。', err); }
+    });
+    dom.resetCurrentProgressBtn.addEventListener('click', () => {
+      const bank = currentBank();
+      if (confirm(`${bank.name} の進捗だけをリセットしますか？`)) { delete state.progressByBank[bank.id]; renderAll(); }
+    });
+    dom.resetAllProgressBtn.addEventListener('click', () => {
+      if (confirm('全問題集の進捗をリセットしますか？この操作は戻せません。')) { state.progressByBank = {}; state.history = []; renderAll(); }
+    });
+  }
+
+  function boot() {
+    try {
+      initDom();
+      safeLoad();
+      attachEvents();
+      if (!getBank(state.currentBankId)) state.currentBankId = BUILTIN_BANKS[0]?.id || '';
+      renderAll();
+    } catch (err) {
+      if (!dom.errorBanner) initDom();
+      showError('起動時エラーが発生しました。', err);
+    }
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>
