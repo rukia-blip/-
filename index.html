@@ -394,7 +394,7 @@
     <header>
       <h1>アイドル×プラン 均一化ルーレット</h1>
       <p class="lead">
-        13人×3プラン＝39フィールド。初期合計は画像の数値をセット済み。抽選すると「不足しているアイドル」と「不足しているプラン」を強く優先しつつ、セル単位の偏りも少し見て、最後に乱数床でブレを残します。
+        13人×3プラン＝39フィールド。初期合計は画像の数値をセット済み。抽選は「おすすめ表示だけ」で、回数は自動では増やしません。所持している組み合わせだけ、表の39マスを手入力で埋めていけます。
       </p>
     </header>
 
@@ -440,7 +440,7 @@
           </div>
 
           <p class="note">
-            表の「初期」は画像の合計値。「センス/ロジック/アノマリー」の39マスは、このページで追加した回数です。手入力もできます。
+            表の「初期」は画像の合計値。「センス/ロジック/アノマリー」の39マスは手入力用です。抽選しても自動では増えません。
           </p>
         </div>
       </section>
@@ -448,9 +448,6 @@
       <aside class="card">
         <div class="cardHead">
           <h2>ルーレット</h2>
-          <div class="btnRow">
-            <button class="secondary" id="undoBtn" type="button" disabled>1つ戻す</button>
-          </div>
         </div>
         <div class="cardBody">
           <div class="result" aria-live="polite">
@@ -458,7 +455,7 @@
             <div class="winner" id="winnerName">未抽選</div>
             <div class="plan" id="winnerPlan">抽選ボタンを押してね</div>
             <div class="btnRow" style="justify-content:center;">
-              <button class="primary" id="rollBtn" type="button">抽選して+1</button>
+              <button class="primary" id="rollBtn" type="button">抽選する（+1しない）</button>
             </div>
           </div>
 
@@ -504,7 +501,7 @@
         { name: "篠澤 広", base: 38 },
         { name: "十王 星南", base: 27 },
         { name: "秦谷 美鈴", base: 9 },
-        { name: "花海 佑芽", base: 23 },
+        { name: "花海 梅芽", base: 23 },
         { name: "姫崎 莉波", base: 36 }
       ],
       plans: [
@@ -526,7 +523,6 @@
 
     const table = document.getElementById("countTable");
     const rollBtn = document.getElementById("rollBtn");
-    const undoBtn = document.getElementById("undoBtn");
     const zeroAddBtn = document.getElementById("zeroAddBtn");
     const resetBtn = document.getElementById("resetBtn");
     const winnerName = document.getElementById("winnerName");
@@ -676,25 +672,10 @@
       settingsFromInputs();
       const candidates = calculateCandidates();
       const pick = weightedPick(candidates);
-      state.cells[pick.idolIndex][pick.planIndex] = clampInt(state.cells[pick.idolIndex][pick.planIndex]) + 1;
-      state.history.push({ idolIndex: pick.idolIndex, planIndex: pick.planIndex, at: new Date().toISOString() });
-      if (state.history.length > 200) state.history.shift();
       winnerName.textContent = pick.idol;
       winnerPlan.textContent = pick.plan;
-      saveState();
-      render();
-      showToast(`${pick.idol} × ${pick.plan} に +1`);
-    }
-
-    function undo() {
-      const last = state.history.pop();
-      if (!last) return;
-      const { idolIndex, planIndex } = last;
-      state.cells[idolIndex][planIndex] = Math.max(0, clampInt(state.cells[idolIndex][planIndex]) - 1);
-      winnerName.textContent = "1つ戻しました";
-      winnerPlan.textContent = `${state.idols[idolIndex].name} × ${state.plans[planIndex].name}`;
-      saveState();
-      render();
+      renderWeights();
+      showToast(`${pick.idol} × ${pick.plan} を抽選しました（回数は未変更）`);
     }
 
     function renderTable() {
@@ -796,7 +777,6 @@
       renderTable();
       renderMeters();
       renderWeights();
-      undoBtn.disabled = state.history.length === 0;
     }
 
     function escapeHtml(str) {
@@ -816,7 +796,6 @@
     }
 
     rollBtn.addEventListener("click", roll);
-    undoBtn.addEventListener("click", undo);
 
     [floorRange, idolPower, planPower, cellPower].forEach(el => {
       el.addEventListener("input", () => {
