@@ -472,11 +472,17 @@
 
           <details>
             <summary>バックアップ/復元</summary>
+            <label class="small" style="margin-top:10px;">保存ファイル名
+              <input id="backupFileName" type="text" value="idol-plan-roulette-backup" placeholder="例: idol-plan-roulette-backup">
+            </label>
             <div class="btnRow" style="margin-top:10px;">
-              <button class="ghost" id="exportBtn" type="button">JSONを書き出し</button>
-              <button class="secondary" id="importBtn" type="button">JSONから復元</button>
+              <button class="ghost" id="exportBtn" type="button">名前を付けてDL</button>
+              <button class="secondary" id="importBtn" type="button">ファイルを指定してインポート</button>
+              <input id="importFile" type="file" accept="application/json,.json" style="display:none;">
             </div>
-            <textarea class="backup" id="backupText" placeholder="ここにJSONが入ります"></textarea>
+            <p class="note">
+              入力中の39マス・初期回数・抽選設定をJSONファイルとして保存/復元します。ファイル名に拡張子がない場合は自動で .json を付けます。
+            </p>
           </details>
         </div>
       </aside>
@@ -537,7 +543,8 @@
     const cellPower = document.getElementById("cellPower");
     const exportBtn = document.getElementById("exportBtn");
     const importBtn = document.getElementById("importBtn");
-    const backupText = document.getElementById("backupText");
+    const backupFileName = document.getElementById("backupFileName");
+    const importFile = document.getElementById("importFile");
     const toast = document.getElementById("toast");
 
     function clone(obj) {
@@ -827,34 +834,65 @@
       render();
     });
 
-    exportBtn.addEventListener("click", async () => {
+    function backupFileBaseName() {
+      const raw = (backupFileName.value || "idol-plan-roulette-backup").trim();
+      const safe = raw
+        .replace(/[\\/:*?"<>|]/g, "_")
+        .replace(/\s+/g, "_")
+        .replace(/^\.+$/, "");
+      const base = safe || "idol-plan-roulette-backup";
+      return base.toLowerCase().endsWith(".json") ? base : `${base}.json`;
+    }
+
+    function downloadJsonFile(filename, json) {
+      const blob = new Blob([json], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function restoreFromBackup(parsed) {
+      if (!parsed.idols || !parsed.plans || !parsed.cells) throw new Error("invalid");
+      state = {
+        ...clone(defaultState),
+        ...parsed,
+        settings: { ...clone(defaultState).settings, ...(parsed.settings || {}) },
+        history: parsed.history || []
+      };
+      saveState();
+      winnerName.textContent = "復元しました";
+      winnerPlan.textContent = "続きから使えます";
+      render();
+    }
+
+    exportBtn.addEventListener("click", () => {
+      const filename = backupFileBaseName();
       const json = JSON.stringify(state, null, 2);
-      backupText.value = json;
-      try {
-        await navigator.clipboard.writeText(json);
-        showToast("JSONをコピーしました");
-      } catch {
-        showToast("JSONを書き出しました");
-      }
+      downloadJsonFile(filename, json);
+      showToast(`${filename} をDLしました`);
     });
 
     importBtn.addEventListener("click", () => {
+      importFile.value = "";
+      importFile.click();
+    });
+
+    importFile.addEventListener("change", async () => {
+      const file = importFile.files && importFile.files[0];
+      if (!file) return;
+
       try {
-        const parsed = JSON.parse(backupText.value);
-        if (!parsed.idols || !parsed.plans || !parsed.cells) throw new Error("invalid");
-        state = {
-          ...clone(defaultState),
-          ...parsed,
-          settings: { ...clone(defaultState).settings, ...(parsed.settings || {}) },
-          history: parsed.history || []
-        };
-        saveState();
-        winnerName.textContent = "復元しました";
-        winnerPlan.textContent = "続きから使えます";
-        render();
-        showToast("復元しました");
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        restoreFromBackup(parsed);
+        showToast(`${file.name} から復元しました`);
       } catch {
-        showToast("JSONの形式が違います");
+        showToast("JSONファイルの形式が違います");
       }
     });
 
