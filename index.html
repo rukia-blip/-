@@ -473,7 +473,7 @@
           <details>
             <summary>バックアップ/復元</summary>
             <label class="small" style="margin-top:10px;">保存ファイル名
-              <input id="backupFileName" type="text" value="gakmas" placeholder="例: gakmas">
+              <input id="backupFileName" type="text" value="gakmas.json" placeholder="例: gakmas.json">
             </label>
             <div class="btnRow" style="margin-top:10px;">
               <button class="ghost" id="exportBtn" type="button">名前を付けてDL</button>
@@ -835,12 +835,12 @@
     });
 
     function backupFileBaseName() {
-      const raw = (backupFileName.value || "gakmas").trim();
+      const raw = (backupFileName.value || "gakmas.json").trim();
       const safe = raw
         .replace(/[\\/:*?"<>|]/g, "_")
         .replace(/\s+/g, "_")
         .replace(/^\.+$/, "");
-      const base = safe || "gakmas";
+      const base = safe || "gakmas.json";
       return base.toLowerCase().endsWith(".json") ? base : `${base}.json`;
     }
 
