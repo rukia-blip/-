@@ -835,12 +835,12 @@
     });
 
     function backupFileBaseName() {
-      const raw = (backupFileName.value || "idol-plan-roulette-backup").trim();
+      const raw = (backupFileName.value || "gakmas").trim();
       const safe = raw
         .replace(/[\\/:*?"<>|]/g, "_")
         .replace(/\s+/g, "_")
         .replace(/^\.+$/, "");
-      const base = safe || "idol-plan-roulette-backup";
+      const base = safe || "gakmas";
       return base.toLowerCase().endsWith(".json") ? base : `${base}.json`;
     }
 
