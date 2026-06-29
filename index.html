@@ -30,10 +30,12 @@
       background: rgba(245,247,251,.92); backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--line);
     }
-    .header-inner { max-width: 1180px; margin: 0 auto; padding: 12px 16px; display: grid; gap: 10px; }
-    .brand { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .brand-title { font-weight: 800; letter-spacing: .02em; }
-    .controls { display: grid; grid-template-columns: minmax(180px, 1fr) auto auto auto; gap: 8px; align-items: center; }
+    .header-inner { max-width: 1180px; margin: 0 auto; padding: 10px 16px; }
+    .controls {
+      display: grid; grid-template-columns: minmax(180px, 1fr) auto auto auto; gap: 8px; align-items: center;
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 12px; margin: 14px 0 18px; box-shadow: var(--shadow);
+    }
     .search {
       width: 100%; border: 1px solid var(--line); border-radius: 999px;
       padding: 10px 14px; background: #fff; color: var(--text); font-size: 15px;
@@ -49,10 +51,6 @@
       border-radius: 999px; padding: 7px 12px; color: var(--text); font-weight: 700;
     }
     main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 64px; }
-    .notice {
-      background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--accent);
-      border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); margin-bottom: 18px;
-    }
     h1, h2, h3 { line-height: 1.25; }
     h1 { font-size: clamp(1.6rem, 2vw + 1rem, 2.4rem); margin: 18px 0; }
     h2 { margin: 42px 0 16px; padding-top: 12px; border-top: 3px solid var(--accent); font-size: 1.55rem; }
@@ -63,7 +61,6 @@
     h3 { margin: 26px 0 10px; font-size: 1.2rem; }
     p { margin: 10px 0; }
     .note-line { background: var(--accent-soft); border-radius: 12px; padding: 9px 12px; }
-    .toc-placeholder { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; margin: 14px 0; }
     details.region {
       background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
       padding: 0; margin: 14px 0; box-shadow: 0 8px 26px rgba(29,40,78,.05);
@@ -87,7 +84,7 @@
       padding: 10px 12px; vertical-align: top; text-align: left;
     }
     .chart-table thead th {
-      position: sticky; top: 128px; z-index: 1;
+      position: sticky; top: 64px; z-index: 1;
       background: #eef2ff; color: #1f2f8f; white-space: nowrap; font-size: .92rem;
     }
     .chart-table th:last-child, .chart-table td:last-child { border-right: none; }
@@ -112,12 +109,9 @@
     .no-results.show { display:block; }
     @media (max-width: 768px) {
       .header-inner { padding: 10px; }
-      .brand { align-items:flex-start; flex-direction: column; gap: 6px; }
-      /* スマホでは日付カードの外幅に合わせる。
-         main左右10px + region枠2px + region-body左右24px = 合計46px */
       .controls {
-        width: calc(100% - 26px);
-        margin-inline: auto;
+        width: 100%;
+        margin: 12px 0 16px;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 8px;
       }
@@ -149,7 +143,7 @@
       .region-body { padding: 0 12px 12px; }
     }
     @media print {
-      .site-header, .notice, .raw-source { display:none; }
+      .site-header, .controls, .raw-source { display:none; }
       body { background:#fff; }
       main { max-width:none; padding:0; }
       .chart-table { min-width:0; font-size: 10px; }
@@ -160,27 +154,19 @@
 <body>
   <header class="site-header">
     <div class="header-inner">
-      <div class="brand">
-        <div class="brand-title">全コミュMAXチャート（一周目）</div>
-        <div class="month-nav" aria-label="月別ナビ"><a href="#month-4">4月</a><a href="#month-5">5月</a><a href="#month-6">6月</a><a href="#month-7">7月</a><a href="#month-8">8月</a><a href="#month-9">9月</a><a href="#month-10">10月</a><a href="#month-11">11月</a><a href="#month-12">12月</a><a href="#month-1">1月</a><a href="#month-3">3月</a></div>
-      </div>
-      <div class="controls">
+      <nav class="month-nav" aria-label="月別ナビ"><a href="#month-4">4月</a><a href="#month-5">5月</a><a href="#month-6">6月</a><a href="#month-7">7月</a><a href="#month-8">8月</a><a href="#month-9">9月</a><a href="#month-10">10月</a><a href="#month-11">11月</a><a href="#month-12">12月</a><a href="#month-1">1月</a><a href="#month-3">3月</a></nav>
+    </div>
+  </header>
+  <main>
+    <article id="content">
+      <h1><span style="color:#3B4EF0"><span style="font-size:20px">全コミュMAXチャート(一周目)</span></span></h1>
+      <div class="controls" aria-label="検索と表示切替">
         <input id="searchInput" class="search" type="search" placeholder="検索：例）保健室 / タルタロス / 依頼44 / 美鶴" autocomplete="off">
         <button id="importantOnly" type="button">★のみ</button>
         <button id="expandAll" type="button">展開</button>
         <button id="collapseAll" type="button">折畳</button>
       </div>
-    </div>
-  </header>
-  <main>
-    <div class="notice">
-      <strong>確認用の静的HTMLです。</strong><br>
-      変換表示ではPCは横長表、スマホ幅では日付カードに切り替わります。情報落ち確認用に、ページ末尾へ原文を完全保持しています。
-    </div>
-    <div id="noResults" class="no-results">該当する日付行がありません。検索語を変えてください。</div>
-    <article id="content">
-      <h1><span style="color:#3B4EF0"><span style="font-size:20px">全コミュMAXチャート(一周目)</span></span></h1>
-<nav class="toc-placeholder"><strong>ページ内ナビ</strong><p>上部の月ナビ・検索・重要項目ボタンで確認できます。</p></nav>
+      <div id="noResults" class="no-results">該当する日付行がありません。検索語を変えてください。</div>
 <h2>概要</h2>
 <p class="">本ページは「ペルソナ3 リロード」の一周目での全コミュMAXを目的としたものです</p>
 <p class="">「ペルソナ3 リロード」は日程にかなりの余裕があるため、時間を有効に使えば一周目でも全コミュMAXは容易に達成できます</p>
