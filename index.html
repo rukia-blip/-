@@ -31,10 +31,11 @@
       border-bottom: 1px solid var(--line);
     }
     .header-inner { max-width: 1180px; margin: 0 auto; padding: 10px 16px; }
+    .page-tools { margin: 14px 0 18px; }
     .controls {
       display: grid; grid-template-columns: minmax(180px, 1fr) auto auto auto; gap: 8px; align-items: center;
       background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-      padding: 12px; margin: 14px 0 18px; box-shadow: var(--shadow);
+      padding: 12px; margin: 0; box-shadow: var(--shadow);
     }
     .search {
       width: 100%; border: 1px solid var(--line); border-radius: 999px;
@@ -109,9 +110,10 @@
     .no-results.show { display:block; }
     @media (max-width: 768px) {
       .header-inner { padding: 10px; }
+      .page-tools { margin: 12px 0 16px; }
       .controls {
         width: 100%;
-        margin: 12px 0 16px;
+        margin: 0;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 8px;
       }
@@ -160,13 +162,15 @@
   <main>
     <article id="content">
       <h1><span style="color:#3B4EF0"><span style="font-size:20px">全コミュMAXチャート(一周目)</span></span></h1>
-      <div class="controls" aria-label="検索と表示切替">
-        <input id="searchInput" class="search" type="search" placeholder="検索：例）保健室 / タルタロス / 依頼44 / 美鶴" autocomplete="off">
-        <button id="importantOnly" type="button">★のみ</button>
-        <button id="expandAll" type="button">展開</button>
-        <button id="collapseAll" type="button">折畳</button>
-      </div>
-      <div id="noResults" class="no-results">該当する日付行がありません。検索語を変えてください。</div>
+      <section class="page-tools" aria-label="検索と表示切替">
+        <div class="controls">
+          <input id="searchInput" class="search" type="search" placeholder="検索：例）保健室 / タルタロス / 依頼44 / 美鶴" autocomplete="off">
+          <button id="importantOnly" type="button">★のみ</button>
+          <button id="expandAll" type="button">展開</button>
+          <button id="collapseAll" type="button">折畳</button>
+        </div>
+        <div id="noResults" class="no-results">該当する日付行がありません。検索語を変えてください。</div>
+      </section>
 <h2>概要</h2>
 <p class="">本ページは「ペルソナ3 リロード」の一周目での全コミュMAXを目的としたものです</p>
 <p class="">「ペルソナ3 リロード」は日程にかなりの余裕があるため、時間を有効に使えば一周目でも全コミュMAXは容易に達成できます</p>
@@ -223,7 +227,7 @@
 </div></details>
 <h2 class="month-heading" id="month-4">4月</h2>
 <section class="chart-section" aria-label="チャート">
-  <div class="chart-toolbar"><h3>チャート</h3><p>PCでは表、スマホ幅では日付ごとのカード表示になります。</p></div>
+  <div class="chart-toolbar"><h3>チャート</h3></div>
   <div class="chart-wrap">
     <table class="chart-table">
       <thead><tr><th>4月</th><th>午前/午後</th><th>放課後/昼間</th><th>夜/影時間</th><th>コミュ</th><th>備考</th></tr></thead>
@@ -243,7 +247,7 @@
 </div></details>
 <h2 class="month-heading" id="month-5">5月</h2>
 <section class="chart-section" aria-label="チャート">
-  <div class="chart-toolbar"><h3>チャート</h3><p>PCでは表、スマホ幅では日付ごとのカード表示になります。</p></div>
+  <div class="chart-toolbar"><h3>チャート</h3></div>
   <div class="chart-wrap">
     <table class="chart-table">
       <thead><tr><th>5月</th><th>午前/午後</th><th>放課後/昼間</th><th>夜/影時間</th><th>コミュ</th><th>備考</th></tr></thead>
@@ -285,7 +289,7 @@
 </div></details>
 <h2 class="month-heading" id="month-6">6月</h2>
 <section class="chart-section" aria-label="チャート">
-  <div class="chart-toolbar"><h3>チャート</h3><p>PCでは表、スマホ幅では日付ごとのカード表示になります。</p></div>
+  <div class="chart-toolbar"><h3>チャート</h3></div>
   <div class="chart-wrap">
     <table class="chart-table">
       <thead><tr><th>6月</th><th>午前/午後</th><th>放課後/昼間</th><th>夜/影時間</th><th>コミュ</th><th>備考</th></tr></thead>
@@ -307,7 +311,7 @@
 </div></details>
 <h2 class="month-heading" id="month-7">7月</h2>
 <section class="chart-section" aria-label="チャート">
-  <div class="chart-toolbar"><h3>チャート</h3><p>PCでは表、スマホ幅では日付ごとのカード表示になります。</p></div>
+  <div class="chart-toolbar"><h3>チャート</h3></div>
   <div class="chart-wrap">
     <table class="chart-table">
       <thead><tr><th>7月</th><th>午前/午後</th><th>放課後/昼間</th><th>夜/影時間</th><th>コミュ</th><th>備考</th></tr></thead>
@@ -335,7 +339,7 @@
 </div></details>
 <h2 class="month-heading" id="month-8">8月</h2>
 <section class="chart-section" aria-label="チャート">
-  <div class="chart-toolbar"><h3>チャート</h3><p>PCでは表、スマホ幅では日付ごとのカード表示になります。</p></div>
+  <div class="chart-toolbar"><h3>チャート</h3></div>
   <div class="chart-wrap">
     <table class="chart-table">
       <thead><tr><th>8月</th><th>午前/午後</th><th>放課後/昼間</th><th>夜/影時間</th><th>コミュ</th><th>備考</th></tr></thead>
@@ -358,7 +362,7 @@
 </div></details>
 <h2 class="month-heading" id="month-9">9月</h2>
 <section class="chart-section" aria-label="チャート">
-  <div class="chart-toolbar"><h3>チャート</h3><p>PCでは表、スマホ幅では日付ごとのカード表示になります。</p></div>
+  <div class="chart-toolbar"><h3>チャート</h3></div>
   <div class="chart-wrap">
     <table class="chart-table">
       <thead><tr><th>9月</th><th>午前/午後</th><th>放課後/昼間</th><th>夜/影時間</th><th>コミュ</th><th>備考</th></tr></thead>
@@ -381,7 +385,7 @@
 </div></details>
 <h2 class="month-heading" id="month-10">10月</h2>
 <section class="chart-section" aria-label="チャート">
-  <div class="chart-toolbar"><h3>チャート</h3><p>PCでは表、スマホ幅では日付ごとのカード表示になります。</p></div>
+  <div class="chart-toolbar"><h3>チャート</h3></div>
   <div class="chart-wrap">
     <table class="chart-table">
       <thead><tr><th>10月</th><th>午前/午後</th><th>放課後/昼間</th><th>夜/影時間</th><th>コミュ</th><th>備考</th></tr></thead>
@@ -404,7 +408,7 @@
 </div></details>
 <h2 class="month-heading" id="month-11">11月</h2>
 <section class="chart-section" aria-label="チャート">
-  <div class="chart-toolbar"><h3>チャート</h3><p>PCでは表、スマホ幅では日付ごとのカード表示になります。</p></div>
+  <div class="chart-toolbar"><h3>チャート</h3></div>
   <div class="chart-wrap">
     <table class="chart-table">
       <thead><tr><th>11月</th><th>午前/午後</th><th>放課後/昼間</th><th>夜/影時間</th><th>コミュ</th><th>備考</th></tr></thead>
@@ -442,7 +446,7 @@
 </div></details>
 <h2 class="month-heading" id="month-12">12月</h2>
 <section class="chart-section" aria-label="チャート">
-  <div class="chart-toolbar"><h3>チャート</h3><p>PCでは表、スマホ幅では日付ごとのカード表示になります。</p></div>
+  <div class="chart-toolbar"><h3>チャート</h3></div>
   <div class="chart-wrap">
     <table class="chart-table">
       <thead><tr><th>12月</th><th>午前/午後</th><th>放課後/昼間</th><th>夜/影時間</th><th>コミュ</th><th>備考</th></tr></thead>
@@ -458,7 +462,7 @@
 </div></details>
 <h2 class="month-heading" id="month-1">1月</h2>
 <section class="chart-section" aria-label="チャート">
-  <div class="chart-toolbar"><h3>チャート</h3><p>PCでは表、スマホ幅では日付ごとのカード表示になります。</p></div>
+  <div class="chart-toolbar"><h3>チャート</h3></div>
   <div class="chart-wrap">
     <table class="chart-table">
       <thead><tr><th>1月</th><th>午前/午後</th><th>放課後/昼間</th><th>夜/影時間</th><th>コミュ</th><th>備考</th></tr></thead>
@@ -476,7 +480,7 @@
 </div></details>
 <h2 class="month-heading" id="month-3">3月</h2>
 <section class="chart-section" aria-label="チャート">
-  <div class="chart-toolbar"><h3>チャート</h3><p>PCでは表、スマホ幅では日付ごとのカード表示になります。</p></div>
+  <div class="chart-toolbar"><h3>チャート</h3></div>
   <div class="chart-wrap">
     <table class="chart-table">
       <thead><tr><th>3月</th><th>午前/午後</th><th>放課後/昼間</th><th>夜</th><th>影時間</th><th>コミュ</th><th>備考</th></tr></thead>
@@ -544,8 +548,8 @@
 <p class="">#pcomment(reply,enableurl,リロード 新/コメント/コメントログ)</p>
 <p class="">すべてのコメントを見る</p>
     </article>
-    <details class="region raw-source" open>
-      <summary>原文完全保持（照合用）</summary>
+    <details class="region raw-source">
+      <summary>原文</summary>
       <pre id="rawSource">&amp;color(#3B4EF0){&amp;size(20){全コミュMAXチャート(一周目)}}
 
 #contents(fromhere)
