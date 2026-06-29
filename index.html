@@ -113,8 +113,16 @@
     @media (max-width: 768px) {
       .header-inner { padding: 10px; }
       .brand { align-items:flex-start; flex-direction: column; gap: 6px; }
-      .controls { grid-template-columns: 1fr 1fr; }
+      /* スマホでは日付カードの外幅に合わせる。
+         main左右10px + region枠2px + region-body左右24px = 合計46px */
+      .controls {
+        width: calc(100% - 26px);
+        margin-inline: auto;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
       .controls .search { grid-column: 1 / -1; }
+      .controls button { width: 100%; min-height: 44px; padding-inline: 8px; }
       main { padding: 14px 10px 48px; }
       .chart-toolbar { display:block; }
       .chart-toolbar p { margin-top: 4px; }
